@@ -1,0 +1,12 @@
+package io.lambdaworks.detection
+
+import scala.jdk.CollectionConverters._
+import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
+
+final case class UrlDetector(content: String, options: UrlDetectorOptions) {
+
+  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.name))
+
+  def extract(): List[Url] = detector.detect().asScala.toList.map(Url.apply)
+
+}

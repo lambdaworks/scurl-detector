@@ -1,0 +1,6 @@
+# scala specific
+.bsp
+
+# sbt specific
+target/
+
