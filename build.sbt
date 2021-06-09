@@ -1,11 +1,26 @@
-name := "ScurlDetector"
+import Dependencies._
 
-version := "0.1"
+val basicInfo = List(
+  name := "ScurlDetector",
+  description := "Provide better description. :)",
+  version := "0.0.1-rc.1"
+)
 
-scalaVersion := "2.13.6"
+val organizationInfo = List(
+  organization := "io.lambdaworks",
+  organizationName := "LambdaWorks",
+  organizationHomepage := Some(new URL("https://www.lambdaworks.io/"))
+)
 
-libraryDependencies += "com.linkedin.urls" % "url-detector" % "0.1.17"
+val root = (project in file("."))
+  .settings(basicInfo: _*)
+  .settings(organizationInfo: _*)
+  .settings(
+    scalaVersion := "2.13.6",
+    libraryDependencies ++= {
+      val core = List(enumeratum, urlDetector)
+      val tests = List(scalaTest).map(_ % Test)
 
-libraryDependencies += "com.beachape" %% "enumeratum" % "1.6.1"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+      core ++ tests
+    }
+  )
