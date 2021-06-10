@@ -2,7 +2,7 @@ import Dependencies._
 
 val basicInfo = List(
   name := "ScurlDetector",
-  description := "Provide better description. :)",
+  description := "Scala library that detects and extracts URLs from string.",
   version := "0.0.1-rc.1"
 )
 

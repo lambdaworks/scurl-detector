@@ -5,7 +5,7 @@ import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOpti
 
 final case class UrlDetector(content: String, options: UrlDetectorOptions = UrlDetectorOptions.Default) {
 
-  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.name))
+  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
   def extract(): List[Url] = detector.detect().asScala.toList.map(Url.apply)
 
