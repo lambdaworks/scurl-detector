@@ -2,7 +2,6 @@ package io.lambdaworks.detection
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import com.linkedin.urls.{Url => LUrl}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
@@ -10,7 +9,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
   val textExpectedUrls =
     Table(
       ("text", "expectedUrls"),
-      ("hello this is a url Linkedin.com", List(Url("http://Linkedin.com"))),
+      ("hello this is a url lambdaworks.le", Nil),
       (
         "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, sprpn.com/hello,,,, sphn.io/something, https://youtube.com/.",
         List(
@@ -23,7 +22,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       ),
       (
-        "Parse http://test.link/g3WMrh and http://test.link/HWRqhq and test.link/aaa",
+        "Parse http://test.link/g3WMrh and http://test.link/HWRqhq and test.link/aaa 6.30pm as url",
         List(
           Url("http://test.link/g3WMrh"),
           Url("http://test.link/HWRqhq"),
@@ -46,6 +45,10 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
           Url("http://test.link/HWRqhq"),
           Url("test.link/aaa")
         )
+      ),
+      (
+        "pen.GO",
+        Nil
       )
     )
 
