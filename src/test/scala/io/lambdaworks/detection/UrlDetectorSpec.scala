@@ -9,7 +9,18 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
   val textExpectedUrls =
     Table(
       ("text", "expectedUrls"),
-      ("hello this is a url lambdaworks.le", Nil),
+      (
+        "Hey, this is our website - check it outhttps://lambdaworks.io./",
+        List(Url("https://lambdaworks.io/"))
+      ),
+      (
+        "Hey, this is our website - check it outftp://lambdaworks.io./",
+        List(Url("ftp://lambdaworks.io/"))
+      ),
+      (
+        "Hey, this is our website - check it outhttp://lambdaworks.io./",
+        List(Url("http://lambdaworks.io/"))
+      ),
       (
         "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, sprpn.com/hello,,,, sphn.io/something, https://youtube.com/.",
         List(

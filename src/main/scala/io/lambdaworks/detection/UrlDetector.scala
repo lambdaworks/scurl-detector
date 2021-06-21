@@ -14,17 +14,22 @@ final case class UrlDetector(content: String, options: UrlDetectorOptions = UrlD
 
   val domainValidator: DomainValidator = DomainValidator.getInstance()
 
-  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+  private val detector: LUrlDetector =
+    new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(options.value))
 
-  def extract(): List[Url] = detector.detect().asScala.toList.map(sanitize(_)).filter(checkIfValidDomain)
+  def extract(): List[Url] =
+    detector.detect().asScala.toList.map(sanitize(_)).filter(checkIfValidDomain)
 
   private def sanitize(url: String): Url = {
     @tailrec
     def loop(url: String): String =
-      if (!endsWithAny(url, ",", "!", "-", ".", "`")) url else loop(url.substring(0, url.length - 1))
+      if (!endsWithAny(url, ",", "!", "-", ".", "`", "./")) url else loop(url.substring(0, url.length - 1))
 
     Url(LUrl.create(loop(url)))
   }
+
+  private def sanitizeContent(content: String): String =
+    content.replace("https://", " https://").replace("ftp://", " ftp://")
 
   private def checkIfValidDomain(url: Url): Boolean = {
     def getTld(url: Url): String = {
