@@ -28,8 +28,8 @@ final case class UrlDetector(content: String, config: Config) {
       .toList
       .map(sanitize(_))
       .filter(checkIfValidDomain)
-      .filter(checkAllowlist)
-      .filter(checkDenylist)
+      .filter(allowlist.isEmpty || _.contained(allowlist))
+      .filterNot(_.contained(denylist))
 
   private def sanitize(url: String): Url = {
     @tailrec
@@ -53,11 +53,5 @@ final case class UrlDetector(content: String, config: Config) {
       domainValidator.isValidTld(getTld(url))
     } else true
   }
-
-  private def checkAllowlist(url: Url): Boolean =
-    allowlist.isEmpty || allowlist.map(_.getHost).contains(url.getHost)
-
-  private def checkDenylist(url: Url): Boolean =
-    denylist.isEmpty || !denylist.map(_.getHost).contains(url.getHost)
 
 }
