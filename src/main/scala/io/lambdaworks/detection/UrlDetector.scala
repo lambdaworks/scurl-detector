@@ -48,19 +48,16 @@ final case class UrlDetector(content: String, config: Config) {
       if (tld.contains("/")) tld.split("/").head
       else tld
     }
+
     if (!Pattern.matches("\\.[0-9]+", getTld(url))) {
       domainValidator.isValidTld(getTld(url))
     } else true
   }
 
   private def checkAllowlist(url: Url): Boolean =
-    if (allowlist != Nil) {
-      allowlist.map(_.getHost).contains(url.getHost)
-    } else true
+    allowlist.isEmpty || allowlist.map(_.getHost).contains(url.getHost)
 
   private def checkDenylist(url: Url): Boolean =
-    if (denylist != Nil) {
-      !denylist.map(_.getHost).contains(url.getHost)
-    } else true
+    denylist.isEmpty || !denylist.map(_.getHost).contains(url.getHost)
 
 }
