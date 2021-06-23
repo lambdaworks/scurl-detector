@@ -10,8 +10,8 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     Table(
       ("text", "expectedUrls"),
       (
-        "Hey, this is our website - check it outhttps://lambdaworks.io./",
-        List(Url("https://lambdaworks.io/"))
+        "Hey, this is our website - check it outhttps://lambdaworks.io/hello",
+        List(Url("https://lambdaworks.io/hello"))
       ),
       (
         "Hey, this is our website - check it outftp://lambdaworks.io./",
@@ -64,7 +64,54 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     )
 
   forAll(textExpectedUrls) { (text: String, expectedUrls: List[Url]) =>
-    val detector = UrlDetector(text)
+    val detector =
+      UrlDetector(text, Config())
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val textExpectedUrlsAllowDenyList =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "Hey, this is our website - check it outhttps://lambdaworks.io/",
+        List(Url("https://lambdaworks.io/"))
+      ),
+      (
+        "Hey, this is our website - check it outftp://lambdaworks.io./",
+        List(Url("ftp://lambdaworks.io/"))
+      ),
+      (
+        "Hey, this is our website - check it outhttp://lambdaworks.io./",
+        List(Url("http://lambdaworks.io/"))
+      )
+    )
+
+  forAll(textExpectedUrlsAllowDenyList) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Default, List("http://lambdaworks.io/")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val textExpectedUrlsAllowDenyList2 =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "Hey, this is our website - check it outhttps://lambdaworks.io/",
+        Nil
+      ),
+      (
+        "Hey, this is our website - check it outftp://lambdaworks.io./",
+        Nil
+      ),
+      (
+        "Hey, this is our website - check it outhttp://lambdaworks.io./",
+        Nil
+      )
+    )
+
+  forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Default, Nil, List("http://lambdaworks.io")))
     detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
   }
 

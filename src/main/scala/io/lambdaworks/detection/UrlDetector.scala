@@ -10,15 +10,26 @@ import org.apache.commons.validator.routines.DomainValidator
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
-final case class UrlDetector(content: String, options: UrlDetectorOptions = UrlDetectorOptions.Default) {
+final case class UrlDetector(content: String, config: Config) {
+
+  private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
+
+  private val denylist: List[Url] = config.denylist.map(Url.apply).map(sanitize(_))
 
   val domainValidator: DomainValidator = DomainValidator.getInstance()
 
   private val detector: LUrlDetector =
-    new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(options.value))
+    new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
 
   def extract(): List[Url] =
-    detector.detect().asScala.toList.map(sanitize(_)).filter(checkIfValidDomain)
+    detector
+      .detect()
+      .asScala
+      .toList
+      .map(sanitize(_))
+      .filter(checkIfValidDomain)
+      .filter(checkAllowlist)
+      .filter(checkDenylist)
 
   private def sanitize(url: String): Url = {
     @tailrec
@@ -41,4 +52,15 @@ final case class UrlDetector(content: String, options: UrlDetectorOptions = UrlD
       domainValidator.isValidTld(getTld(url))
     } else true
   }
+
+  private def checkAllowlist(url: Url): Boolean =
+    if (allowlist != Nil) {
+      allowlist.map(_.getHost).contains(url.getHost)
+    } else true
+
+  private def checkDenylist(url: Url): Boolean =
+    if (denylist != Nil) {
+      !denylist.map(_.getHost).contains(url.getHost)
+    } else true
+
 }
