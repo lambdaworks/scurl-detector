@@ -22,14 +22,24 @@ final case class UrlDetector(content: String, config: Config) {
     new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
 
   def extract(): List[Url] =
-    detector
-      .detect()
-      .asScala
-      .toList
-      .map(sanitize(_))
-      .filter(checkIfValidDomain)
-      .filter(allowlist.isEmpty || _.contained(allowlist))
-      .filterNot(_.contained(denylist))
+    if (config.options != UrlDetectorOptions.AllowSingleLevelDomain) {
+      detector
+        .detect()
+        .asScala
+        .toList
+        .map(sanitize(_))
+        .filter(checkIfValidDomain)
+        .filter(allowlist.isEmpty || _.contained(allowlist))
+        .filterNot(_.contained(denylist))
+    } else {
+      detector
+        .detect()
+        .asScala
+        .toList
+        .map(sanitize(_))
+        .filter(allowlist.isEmpty || _.contained(allowlist))
+        .filterNot(_.contained(denylist))
+    }
 
   private def sanitize(url: String): Url = {
     @tailrec
@@ -43,11 +53,8 @@ final case class UrlDetector(content: String, config: Config) {
     content.replace("https://", " https://").replace("ftp://", " ftp://")
 
   private def checkIfValidDomain(url: Url): Boolean = {
-    def getTld(url: Url): String = {
-      val tld = ".".concat(url.toString.split("\\.").last)
-      if (tld.contains("/")) tld.split("/").head
-      else tld
-    }
+    def getTld(url: Url): String =
+      ".".concat(url.getHost.split("\\.").last)
 
     if (!Pattern.matches("\\.[0-9]+", getTld(url))) {
       domainValidator.isValidTld(getTld(url))
