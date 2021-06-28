@@ -60,6 +60,10 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       (
         "pen.GO",
         Nil
+      ),
+      (
+        "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/GaGi",
+        List(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("http://test.link/GaGi"))
       )
     )
 
@@ -112,6 +116,154 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
   forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
     val detector =
       UrlDetector(text, Config(UrlDetectorOptions.Default, Nil, List("http://lambdaworks.io")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testQuoteMatch =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "Hey, this is our website - check it out \"https://google.com/\"",
+        Nil
+      ),
+      (
+        "Hey, this is our website - check it out \"https://lambdaworks.io/\"",
+        List(Url("https://lambdaworks.io/"))
+      )
+    )
+
+  forAll(testQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.QuoteMatch, List(), List("https://google.com/")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testSingleQuoteMatch =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "'https://google.com/'",
+        List(Url("https://google.com/"))
+      )
+    )
+
+  forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.SingleQuoteMatch))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testBracketMatch =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "(https://google.com/",
+        List(Url("https://google.com/"))
+      ),
+      (
+        "[https://google.com/",
+        List(Url("https://google.com/"))
+      ),
+      (
+        "Visit {https://google.com/}",
+        List(Url("https://google.com/"))
+      )
+    )
+
+  forAll(testBracketMatch) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.BracketMatch))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testJson =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "{\"site\": \"google.com\"}",
+        List(Url("http://google.com/"))
+      ),
+      (
+        "{\"site\": \"lambdaworks.io\"}",
+        Nil
+      )
+    )
+
+  forAll(testJson) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Json, List("google.com")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testJavascript =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "var myUrl = \"http://example.com/index.html?param=1&anotherParam=2\"",
+        List(Url("http://example.com/index.html?param=1&anotherParam=2"))
+      )
+    )
+
+  forAll(testJavascript) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Javascript))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testHtml =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "<img src=\"https://www.google.com/pic\"  width=\"500\" height=\"600\">",
+        List(Url("https://www.google.com/pic"))
+      ),
+      (
+        "<img src=\"https://lambdaworks.io/pic\"  width=\"500\" height=\"600\">",
+        Nil
+      )
+    )
+
+  forAll(testHtml) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Html, List("www.google.com")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testXml =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">",
+        List(Url("http://www.w3.org/1999/XSL/Transform"))
+      ),
+      (
+        "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.google.com\">",
+        Nil
+      )
+    )
+
+  forAll(testXml) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.Xml, Nil, List("google.com")))
+    detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+  }
+
+  val testAllowSingleLevelDomain =
+    Table(
+      ("text", "expectedUrls"),
+      (
+        "Please visit http://localhost",
+        List(Url("http://localhost/"))
+      ),
+      (
+        "Please visit go/",
+        List(Url("http://go/"))
+      )
+    )
+
+  forAll(testAllowSingleLevelDomain) { (text: String, expectedUrls: List[Url]) =>
+    val detector =
+      UrlDetector(text, Config(UrlDetectorOptions.AllowSingleLevelDomain))
     detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
   }
 

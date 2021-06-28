@@ -8,7 +8,8 @@ final case class Url private (underlying: LUrl) extends AnyVal {
 
   def getHost: String = underlying.getHost
 
-  def contained(urls: List[Url]): Boolean = urls.map(_.getHost).contains(getHost)
+  def contained(urls: List[Url]): Boolean =
+    urls.map(_.getHost.replace("www.", "")).contains(getHost.replace("www.", ""))
 
 }
 

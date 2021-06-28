@@ -13,7 +13,7 @@ object UrlDetectorOptions extends StringEnum[UrlDetectorOptions] {
   case object SingleQuoteMatch       extends UrlDetectorOptions(value = "SINGLE_QUOTE_MATCH")
   case object BracketMatch           extends UrlDetectorOptions(value = "BRACKET_MATCH")
   case object Json                   extends UrlDetectorOptions(value = "JSON")
-  case object Javasript              extends UrlDetectorOptions(value = "JAVASCRIPT")
+  case object Javascript             extends UrlDetectorOptions(value = "JAVASCRIPT")
   case object Xml                    extends UrlDetectorOptions(value = "XML")
   case object Html                   extends UrlDetectorOptions(value = "HTML")
   case object AllowSingleLevelDomain extends UrlDetectorOptions(value = "ALLOW_SINGLE_LEVEL_DOMAIN")
