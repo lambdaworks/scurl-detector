@@ -10,6 +10,11 @@ import org.apache.commons.validator.routines.DomainValidator
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
+/** Represents URL detector.
+  *
+  *  @param content text from which URLs are being extracted
+  *  @param config URL detector configuration
+  */
 final case class UrlDetector(content: String, config: Config) {
 
   private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
@@ -21,6 +26,10 @@ final case class UrlDetector(content: String, config: Config) {
   private val detector: LUrlDetector =
     new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
 
+  /** Method that extracts URLs from text.
+    *
+    *  @return list of found URLs
+    */
   def extract(): List[Url] =
     if (config.options != UrlDetectorOptions.AllowSingleLevelDomain) {
       detector

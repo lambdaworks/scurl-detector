@@ -2,18 +2,36 @@ package io.lambdaworks.detection
 
 import com.linkedin.urls.{Url => LUrl}
 
+/** Represents a URL along with utility methods.
+  *
+  *  @param underlying [[com.linkedin.urls.Url]]
+  */
 final case class Url private (underlying: LUrl) extends AnyVal {
 
   override def toString: String = underlying.getFullUrl
 
+  /** Gets host part of URL by invoking underlying's method getHost
+    * @return string value of host
+    */
   def getHost: String = underlying.getHost
 
+  /** Checks if list of URLs contains certain URL
+    *
+    * @param urls list of URLs
+    * @return boolean if URL is contained in list of URLs
+    */
   def contained(urls: List[Url]): Boolean =
     urls.map(_.getHost.replace("www.", "")).contains(getHost.replace("www.", ""))
 
 }
 
 object Url {
+
+  /** Creates Url object from string value of URL
+    *
+    *  @param url string value of URL
+    *  @return new [[io.lambdaworks.detection.Url]] instance
+    */
   def apply(url: String): Url = new Url(LUrl.create(url))
 
   implicit def url2String(url: Url): String = url.toString
