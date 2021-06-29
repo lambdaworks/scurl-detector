@@ -21,7 +21,7 @@ final case class UrlDetector(content: String, config: Config) {
 
   private val denylist: List[Url] = config.denylist.map(Url.apply).map(sanitize(_))
 
-  val domainValidator: DomainValidator = DomainValidator.getInstance()
+  private val domainValidator: DomainValidator = DomainValidator.getInstance()
 
   private val detector: LUrlDetector =
     new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
@@ -31,24 +31,14 @@ final case class UrlDetector(content: String, config: Config) {
     *  @return list of found URLs
     */
   def extract(): List[Url] =
-    if (config.options != UrlDetectorOptions.AllowSingleLevelDomain) {
-      detector
-        .detect()
-        .asScala
-        .toList
-        .map(sanitize(_))
-        .filter(checkIfValidDomain)
-        .filter(allowlist.isEmpty || _.contained(allowlist))
-        .filterNot(_.contained(denylist))
-    } else {
-      detector
-        .detect()
-        .asScala
-        .toList
-        .map(sanitize(_))
-        .filter(allowlist.isEmpty || _.contained(allowlist))
-        .filterNot(_.contained(denylist))
-    }
+    detector
+      .detect()
+      .asScala
+      .toList
+      .map(sanitize(_))
+      .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
+      .filter(allowlist.isEmpty || _.contained(allowlist))
+      .filterNot(_.contained(denylist))
 
   private def sanitize(url: String): Url = {
     @tailrec

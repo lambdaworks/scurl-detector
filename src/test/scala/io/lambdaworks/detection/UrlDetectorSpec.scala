@@ -62,8 +62,20 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         Nil
       ),
       (
+        "http://013.xxx/",
+        List(Url("http://013.xxx/"))
+      ),
+      (
+        "name.lastname@gmail.com",
+        List(Url("http://name.lastname@gmail.com"))
+      ),
+      (
         "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/GaGi",
         List(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("http://test.link/GaGi"))
+      ),
+      (
+        "http://user:pass@host.com host.com",
+        List(Url("http://user:pass@host.com"), Url("http://host.com"))
       )
     )
 

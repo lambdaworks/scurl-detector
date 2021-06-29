@@ -2,7 +2,7 @@
 
 # Scala URL Detector
 
-Scala library that detects and extracts URLs from text. It is created to overcome some of the known issues of LinkedIn Engineering team's open-sourced on the following [repo](https://github.com/linkedin/URL-Detector).
+Scala library that detects and extracts URLs from text. It is created based on forked library of LinkedIn Engineering team's open-sourced on the following [repo](https://github.com/URL-Detector/URL-Detector).
 
 
 ### How to use
