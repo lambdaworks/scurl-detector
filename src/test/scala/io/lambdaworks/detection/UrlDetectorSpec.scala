@@ -37,7 +37,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         List(
           Url("http://test.link/g3WMrh"),
           Url("http://test.link/HWRqhq"),
-          Url("test.link/aaa"),
+          Url("test.link/aaa")
         )
       ),
       (

@@ -17,8 +17,9 @@ val root = (project in file("."))
   .settings(organizationInfo: _*)
   .settings(
     scalaVersion := "2.13.6",
+    crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
     libraryDependencies ++= {
-      val core  = List(enumeratum, urlDetector, commonsValidator)
+      val core  = List(enumeratum, urlDetector, commonsValidator, scalaCollectionCompat)
       val tests = List(scalaTest).map(_ % Test)
 
       core ++ tests
