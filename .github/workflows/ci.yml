@@ -21,4 +21,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run tests
-        run: sbt test
+        run: sbt +test
