@@ -67,7 +67,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       ),
       (
         "name.lastname@gmail.com",
-        List(Url("http://name.lastname@gmail.com"))
+        Nil
       ),
       (
         "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/GaGi",
@@ -76,6 +76,46 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       (
         "http://user:pass@host.com host.com",
         List(Url("http://user:pass@host.com"), Url("http://host.com"))
+      ),
+      (
+        "21.10am 21:10pm 12345.com/abc 12345.com/123 21.10am/dmg http://21.10am 9.49am 50.50am 192.168.1.3",
+        List(Url("12345.com/abc"), Url("12345.com/123"), Url("192.168.1.3"))
+      ),
+      (
+        """
+          |Add <fname>
+          |Limited Edition Pre Order available now. All signed by Me!!!
+          |Order here - http://store.milos.com....I will be signing some on live soon.Asoon as I get a pen.GO NOW !
+          |I hope this.works
+          |""".stripMargin,
+        List(Url("http://store.milos.com/"), Url("http://this.works/"))
+      ),
+      (
+        """
+          |emacsrocks.com are emacs.rocks are valid... valid.me is also valid.
+          |mysite.not is not valid
+          |world.MINI friend.muTUal lw.offIce for.example
+          |""".stripMargin,
+        List(
+          Url("http://emacsrocks.com/"),
+          Url("http://emacs.rocks/"),
+          Url("http://valid.me/"),
+          Url("http://world.MINI/"),
+          Url("http://friend.muTUal/"),
+          Url("http://lw.offIce/")
+        )
+      ),
+      (
+        "Parse http://www.valid.link. Also, parse this - http://link.me/DM.....",
+        List(Url("http://www.valid.link"), Url("http://link.me/DM"))
+      ),
+      (
+        "Hey here's linkhttp://www.google.com arrayhttps://www.google.com https://www.google.com",
+        List(Url("http://www.google.com/"), Url("https://www.google.com/"), Url("https://www.google.com/"))
+      ),
+      (
+        "taro@storm.audio dragutin@superphone.io jdoe@gmail.com",
+        Nil
       )
     )
 
@@ -179,6 +219,10 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       (
         "Visit {https://google.com/}",
         List(Url("https://google.com/"))
+      ),
+      (
+        "Parse (((http://www.valid.link)(. Also, parse this - ())http://link.me/DM.))(.....",
+        List(Url("http://www.valid.link/"), Url("http://link.me/DM"))
       )
     )
 

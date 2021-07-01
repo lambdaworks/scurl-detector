@@ -5,7 +5,7 @@ import java.util.regex.Pattern
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
 import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
-import org.apache.commons.validator.routines.DomainValidator
+import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
@@ -23,6 +23,8 @@ final case class UrlDetector(content: String, config: Config) {
 
   private val domainValidator: DomainValidator = DomainValidator.getInstance()
 
+  private val emailValidator: EmailValidator = EmailValidator.getInstance()
+
   private val detector: LUrlDetector =
     new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
 
@@ -36,6 +38,7 @@ final case class UrlDetector(content: String, config: Config) {
       .asScala
       .toList
       .map(sanitize(_))
+      .filterNot(isEmail)
       .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
       .filter(allowlist.isEmpty || _.contained(allowlist))
       .filterNot(_.contained(denylist))
@@ -59,5 +62,10 @@ final case class UrlDetector(content: String, config: Config) {
       domainValidator.isValidTld(getTld(url))
     } else true
   }
+
+  private def isEmail(url: Url): Boolean =
+    emailValidator.isValid(
+      url.toString.replace("http://", "").replace("https://", "").replace("ftp://", "").dropRight(1)
+    )
 
 }
