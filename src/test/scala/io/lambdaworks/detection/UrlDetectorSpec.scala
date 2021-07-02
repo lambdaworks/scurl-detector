@@ -121,7 +121,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   forAll(textExpectedUrls) { (text: String, expectedUrls: List[Url]) =>
     val detector =
-      UrlDetector(text, Config())
+      UrlDetector(text)
     detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
   }
 
@@ -186,7 +186,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   forAll(testQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
     val detector =
-      UrlDetector(text, Config(UrlDetectorOptions.QuoteMatch, List(), List("https://google.com/")))
+      UrlDetector(text, Config(UrlDetectorOptions.QuoteMatch, Nil, List("https://google.com/")))
     detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
   }
 
