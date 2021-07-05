@@ -26,13 +26,25 @@ final case class UrlDetector(content: String, config: Config = Config()) {
   private val emailValidator: EmailValidator = EmailValidator.getInstance()
 
   private val detector: LUrlDetector =
-    new LUrlDetector(sanitizeContent(content), LUrlDetectorOptions.valueOf(config.options.value))
+    new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
   /** Method that extracts URLs from text.
     *
     *  @return list of found URLs
     */
-  def extract(): List[Url] =
+  def extract(): List[Url] = {
+    def isEmail(url: Url): Boolean =
+      emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
+
+    def checkIfValidDomain(url: Url): Boolean = {
+      def getTld(url: Url): String =
+        ".".concat(url.getHost.split("\\.").last)
+
+      if (!Pattern.matches("\\.[0-9]+", getTld(url))) {
+        domainValidator.isValidTld(getTld(url))
+      } else true
+    }
+
     detector
       .detect()
       .asScala
@@ -42,6 +54,7 @@ final case class UrlDetector(content: String, config: Config = Config()) {
       .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
       .filter(allowlist.isEmpty || _.contained(allowlist))
       .filterNot(_.contained(denylist))
+  }
 
   private def sanitize(url: String): Url = {
     @tailrec
@@ -50,22 +63,5 @@ final case class UrlDetector(content: String, config: Config = Config()) {
 
     Url(LUrl.create(loop(url)))
   }
-
-  private def sanitizeContent(content: String): String =
-    content.replace("https://", " https://").replace("ftp://", " ftp://")
-
-  private def checkIfValidDomain(url: Url): Boolean = {
-    def getTld(url: Url): String =
-      ".".concat(url.getHost.split("\\.").last)
-
-    if (!Pattern.matches("\\.[0-9]+", getTld(url))) {
-      domainValidator.isValidTld(getTld(url))
-    } else true
-  }
-
-  private def isEmail(url: Url): Boolean =
-    emailValidator.isValid(
-      url.toString.replace("http://", "").replace("https://", "").replace("ftp://", "").dropRight(1)
-    )
 
 }
