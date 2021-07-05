@@ -22,13 +22,13 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         List(Url("http://lambdaworks.io/"))
       ),
       (
-        "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, sprpn.com/hello,,,, sphn.io/something, https://youtube.com/.",
+        "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, lw.com/hello,,,, lw.io/something, https://youtube.com/.",
         List(
           Url("wwww.google.com"),
           Url("google.com"),
           Url("slack.test.io"),
-          Url("sprpn.com/hello"),
-          Url("sphn.io/something"),
+          Url("lw.com/hello"),
+          Url("lw.io/something"),
           Url("https://youtube.com/")
         )
       ),
@@ -70,8 +70,8 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         Nil
       ),
       (
-        "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/GaGi",
-        List(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("http://test.link/GaGi"))
+        "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/lw",
+        List(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("http://test.link/lw"))
       ),
       (
         "http://user:pass@host.com host.com",
@@ -85,10 +85,10 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         """
           |Add <fname>
           |Limited Edition Pre Order available now. All signed by Me!!!
-          |Order here - http://store.milos.com....I will be signing some on live soon.Asoon as I get a pen.GO NOW !
+          |Order here - http://store.lw.com....I will be signing some on live soon.Asoon as I get a pen.GO NOW !
           |I hope this.works
           |""".stripMargin,
-        List(Url("http://store.milos.com/"), Url("http://this.works/"))
+        List(Url("http://store.lw.com/"), Url("http://this.works/"))
       ),
       (
         """
@@ -114,7 +114,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         List(Url("http://www.google.com/"), Url("https://www.google.com/"), Url("https://www.google.com/"))
       ),
       (
-        "taro@storm.audio dragutin@superphone.io jdoe@gmail.com",
+        "taro@storm.audio janedoe@yahoo.com jdoe@gmail.com",
         Nil
       )
     )
