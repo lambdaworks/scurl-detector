@@ -26,7 +26,7 @@ final case class UrlDetector(content: String, config: Config = Config()) {
   private val emailValidator: EmailValidator = EmailValidator.getInstance()
 
   private val detector: LUrlDetector =
-    new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
+    new LUrlDetector(content.replace("\\", " "), LUrlDetectorOptions.valueOf(config.options.value))
 
   /** Method that extracts URLs from text.
     *

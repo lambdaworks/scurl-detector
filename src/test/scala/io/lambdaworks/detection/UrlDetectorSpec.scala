@@ -116,6 +116,90 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       (
         "taro@storm.audio janedoe@yahoo.com jdoe@gmail.com",
         Nil
+      ),
+      (
+        "http://www.google.com/blah/..",
+        List(Url("http://www.google.com/blah/"))
+      ),
+      (
+        "http://3279880203/blah",
+        List(Url("http://3279880203/blah"))
+      ),
+      (
+        "http://host.com/ab%23cd",
+        List(Url("http://host.com/ab%23cd"))
+      ),
+      (
+        "http://lw.com/foo#bar#baz",
+        List(Url("http://lw.com/foo#bar#baz"))
+      ),
+      (
+        "http://go.co/a/b/../c",
+        List(Url("http://go.co/a/b/../c"))
+      ),
+      (
+        "http://195.127.0.11/blah",
+        List(Url("http://195.127.0.11/blah"))
+      ),
+      (
+        "http://big.big.boss@176.32.103.205/",
+        List(Url("http://big.big.boss@176.32.103.205/"))
+      ),
+      (
+        "http://www.gotaport.com:1234/",
+        List(Url("http://www.gotaport.com:1234/"))
+      ),
+      (
+        "%20leadingspace.com",
+        List(Url("http://%20leadingspace.com/"))
+      ),
+      (
+        "http://168.188.99.26/.secure/www.ebay.com/",
+        List(Url("http://168.188.99.26/.secure/www.ebay.com/"))
+      ),
+      (
+        "bewp.bop.com/boop?bip=2&bep=3",
+        List(Url("bewp.bop.com/boop?bip=2&bep=3"))
+      ),
+      (
+        "http://touch.www.lw.com:9000",
+        List(Url("http://touch.www.lw.com:9000"))
+      ),
+      (
+        "http://bah.com/lala/@1234/@dfd@df?@dsf#ono",
+        List(Url("http://bah.com/lala/@1234/@dfd@df?@dsf#ono"))
+      ),
+      (
+        "https://dewd:dood@www.google.com:20/?why=is&this=test#?@Sdsf",
+        List(Url("https://dewd:dood@www.google.com:20/?why=is&this=test#?@Sdsf"))
+      ),
+      (
+        "http://ono:a@fboo.com:90/dhdh/@1234",
+        List(Url("http://ono:a@fboo.com:90/dhdh/@1234"))
+      ),
+      (
+        "ftp://whosdere:me@google.com/",
+        List(Url("ftp://whosdere:me@google.com/"))
+      ),
+      (
+        "ono:doope@fb.net:9090/dhdh",
+        List(Url("http://ono:doope@fb.net:9090/dhdh"))
+      ),
+      (
+        "https://www.google.com/search?q=aaa",
+        List(Url("https://www.google.com/search?q=aaa"))
+      ),
+      (
+        "lalal:@www.gogo.com http://fbeoo@boop.com/dhdeh/@1234?aj=r",
+        List(Url("http://fbeoo@boop.com/dhdeh/@1234?aj=r"))
+      ),
+      (
+        "http://\\\\x01\\\\x80.com/",
+        List(Url("http://x80.com/"))
+      ),
+      (
+        "http://www.google.com/foo\\tbar\\rbaz\\n2",
+        List(Url("http://www.google.com/foo"))
       )
     )
 
@@ -314,6 +398,14 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       (
         "Please visit go/",
         List(Url("http://go/"))
+      ),
+      (
+        "http://host/%25%32%35%25%32%35",
+        List(Url("http://host/%25%32%35%25%32%35"))
+      ),
+      (
+        "http://www.0xb02067cd/",
+        List(Url("http://www.0xb02067cd/"))
       )
     )
 
