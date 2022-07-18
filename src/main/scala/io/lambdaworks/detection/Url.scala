@@ -1,6 +1,7 @@
 package io.lambdaworks.detection
 
 import com.linkedin.urls.{Url => LUrl}
+import scala.language.implicitConversions
 
 /** Represents a URL along with utility methods.
   *
