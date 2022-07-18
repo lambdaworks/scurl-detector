@@ -3,11 +3,11 @@ import sbt._
 object Dependencies {
 
   private object Versions {
-    val Enumeratum            = "1.6.1"
+    val Enumeratum            = "1.7.0"
     val UrlDetector           = "0.1.23"
-    val ScalaTest             = "3.2.2"
+    val ScalaTest             = "3.2.12"
     val CommonsValidator      = "1.7"
-    val ScalaCollectionCompat = "2.4.4"
+    val ScalaCollectionCompat = "2.8.0"
   }
 
   val enumeratum: ModuleID       = "com.beachape"           %% "enumeratum"       % Versions.Enumeratum
