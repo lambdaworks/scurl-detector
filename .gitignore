@@ -3,3 +3,6 @@
 
 # sbt specific
 target/
+
+# ide specific
+.idea/
