@@ -10,10 +10,10 @@ object Dependencies {
     val ScalaCollectionCompat = "2.8.0"
   }
 
-  val enumeratum: ModuleID       = "com.beachape"           %% "enumeratum"       % Versions.Enumeratum
+  val enumeratum: ModuleID       = "com.beachape"          %% "enumeratum"        % Versions.Enumeratum
   val urlDetector: ModuleID      = "io.github.url-detector" % "url-detector"      % Versions.UrlDetector
-  val scalaTest: ModuleID        = "org.scalatest"          %% "scalatest"        % Versions.ScalaTest
+  val scalaTest: ModuleID        = "org.scalatest"         %% "scalatest"         % Versions.ScalaTest
   val commonsValidator: ModuleID = "commons-validator"      % "commons-validator" % Versions.CommonsValidator
-  val scalaCollectionCompat
-    : ModuleID = "org.scala-lang.modules" %% "scala-collection-compat" % Versions.ScalaCollectionCompat
+  val scalaCollectionCompat: ModuleID =
+    "org.scala-lang.modules" %% "scala-collection-compat" % Versions.ScalaCollectionCompat
 }

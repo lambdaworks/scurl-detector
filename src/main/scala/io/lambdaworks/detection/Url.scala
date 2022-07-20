@@ -3,24 +3,27 @@ package io.lambdaworks.detection
 import com.linkedin.urls.{Url => LUrl}
 import scala.language.implicitConversions
 
-/** Represents a URL along with utility methods.
-  *
-  *  @param underlying [[com.linkedin.urls.Url]]
-  */
+/**
+ * Represents a URL along with utility methods.
+ *
+ *  @param underlying [[com.linkedin.urls.Url]]
+ */
 final case class Url private (underlying: LUrl) extends AnyVal {
 
   override def toString: String = underlying.getFullUrl
 
-  /** Gets host part of URL by invoking underlying's method getHost
-    * @return string value of host
-    */
+  /**
+   * Gets host part of URL by invoking underlying's method getHost
+   * @return string value of host
+   */
   def getHost: String = underlying.getHost
 
-  /** Checks if list of URLs contains certain URL. We consider that www.url.com and url.com are same URL.
-    *
-    * @param urls list of URLs
-    * @return boolean if URL is contained in list of URLs
-    */
+  /**
+   * Checks if list of URLs contains certain URL. We consider that www.url.com and url.com are same URL.
+   *
+   * @param urls list of URLs
+   * @return boolean if URL is contained in list of URLs
+   */
   def contained(urls: List[Url]): Boolean = {
     val replacedUrl = getHost.replace("www.", "")
     urls.map(_.getHost.replace("www.", "")).contains(replacedUrl)
@@ -30,11 +33,12 @@ final case class Url private (underlying: LUrl) extends AnyVal {
 
 object Url {
 
-  /** Creates Url object from string value of URL
-    *
-    *  @param url string value of URL
-    *  @return new [[io.lambdaworks.detection.Url]] instance
-    */
+  /**
+   * Creates Url object from string value of URL
+   *
+   *  @param url string value of URL
+   *  @return new [[io.lambdaworks.detection.Url]] instance
+   */
   def apply(url: String): Url = new Url(LUrl.create(url))
 
   implicit def url2String(url: Url): String = url.toString
