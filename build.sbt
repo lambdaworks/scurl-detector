@@ -1,5 +1,7 @@
 import Dependencies._
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 val basicInfo = List(
   name        := "ScurlDetector",
   description := "Scala library that detects and extracts URLs from string.",
@@ -12,17 +14,30 @@ val organizationInfo = List(
   organizationHomepage := Some(new URL("https://www.lambdaworks.io/"))
 )
 
+addCommandAlias("prepare", "fix; fmt")
+addCommandAlias("check", "fixCheck; fmtCheck")
+addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
+addCommandAlias("fmtCheck", "all scalafmtSbtCheck scalafmtCheckAll")
+addCommandAlias("fix", "scalafixAll")
+addCommandAlias("fixCheck", "scalafixAll --check")
+
+ThisBuild / scalafixDependencies ++= ScalaFix
+ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
+
 val root = (project in file("."))
   .settings(basicInfo: _*)
   .settings(organizationInfo: _*)
   .settings(
-    scalaVersion       := "2.13.6",
-    crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
+    scalaVersion       := "2.13.8",
+    crossScalaVersions := Seq("2.12.15", "2.13.8"),
     crossSbtVersions   := Vector("0.13.18", "1.5.3"),
-    libraryDependencies ++= {
-      val core  = List(enumeratum, urlDetector, commonsValidator, scalaCollectionCompat)
-      val tests = List(scalaTest).map(_ % Test)
-
-      core ++ tests
+    libraryDependencies ++= All,
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision,
+    scalacOptions += {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, 13)) => "-Wunused"
+        case _             => "-Ywarn-unused-import"
+      }
     }
   )
