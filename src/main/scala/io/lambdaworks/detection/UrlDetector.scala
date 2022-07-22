@@ -1,20 +1,20 @@
 package io.lambdaworks.detection
 
-import java.util.regex.Pattern
-
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
 import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
 import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
+import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
-/** Represents URL detector.
-  *
-  *  @param content text from which URLs are being extracted
-  *  @param config URL detector configuration
-  */
+/**
+ * Represents URL detector.
+ *
+ *  @param content text from which URLs are being extracted
+ *  @param config URL detector configuration
+ */
 final case class UrlDetector(content: String, config: Config = Config()) {
 
   private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
@@ -25,13 +25,13 @@ final case class UrlDetector(content: String, config: Config = Config()) {
 
   private val emailValidator: EmailValidator = EmailValidator.getInstance()
 
-  private val detector: LUrlDetector =
-    new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
+  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
-  /** Method that extracts URLs from text.
-    *
-    *  @return list of found URLs
-    */
+  /**
+   * Method that extracts URLs from text.
+   *
+   *  @return list of found URLs
+   */
   def extract(): List[Url] = {
     def isEmail(url: Url): Boolean =
       emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
