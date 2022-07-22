@@ -29,8 +29,7 @@ val root = (project in file("."))
   .settings(organizationInfo: _*)
   .settings(
     scalaVersion       := "2.13.8",
-    crossScalaVersions := Seq("2.12.15", "2.13.8"),
-    crossSbtVersions   := Vector("0.13.18", "1.5.3"),
+    crossScalaVersions := Seq("2.12.13", "2.13.8"),
     libraryDependencies ++= All,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
