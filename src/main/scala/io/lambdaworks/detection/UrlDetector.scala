@@ -1,12 +1,11 @@
 package io.lambdaworks.detection
 
-import java.util.regex.Pattern
-
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
 import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
 import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
+import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
