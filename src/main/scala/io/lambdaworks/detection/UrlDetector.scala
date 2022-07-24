@@ -91,5 +91,4 @@ final case class UrlDetector(content: String, config: Config = Config()) {
     Url(LUrl.create(loop(url)))
   }
 
-
 }
