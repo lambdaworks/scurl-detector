@@ -7,7 +7,7 @@ sealed abstract class UrlDetectorOptions(val value: String) extends StringEnumEn
 /** The options to use when detecting URLs. */
 object UrlDetectorOptions extends StringEnum[UrlDetectorOptions] {
 
-  val values = findValues
+  val values: IndexedSeq[UrlDetectorOptions] = findValues
 
   /** Default options, no special checks. */
   case object Default extends UrlDetectorOptions(value = "Default")
