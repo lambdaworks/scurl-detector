@@ -12,19 +12,21 @@ object Dependencies {
     val Scaluzzi              = "0.1.20"
   }
 
+  import Versions._
+
   lazy val All =
     List(
-      "com.beachape"           %% "enumeratum"              % Versions.Enumeratum,
-      "io.github.url-detector"  % "url-detector"            % Versions.UrlDetector,
-      "org.scalatest"          %% "scalatest"               % Versions.ScalaTest % Test,
-      "commons-validator"       % "commons-validator"       % Versions.CommonsValidator,
-      "org.scala-lang.modules" %% "scala-collection-compat" % Versions.ScalaCollectionCompat
+      "com.beachape"           %% "enumeratum"              % Enumeratum,
+      "io.github.url-detector"  % "url-detector"            % UrlDetector,
+      "org.scalatest"          %% "scalatest"               % ScalaTest % Test,
+      "commons-validator"       % "commons-validator"       % CommonsValidator,
+      "org.scala-lang.modules" %% "scala-collection-compat" % ScalaCollectionCompat
     )
 
   lazy val ScalaFix =
     List(
-      "com.github.liancheng" %% "organize-imports" % Versions.OrganizeImports,
-      "com.github.vovapolu"  %% "scaluzzi"         % Versions.Scaluzzi
+      "com.github.liancheng" %% "organize-imports" % OrganizeImports,
+      "com.github.vovapolu"  %% "scaluzzi"         % Scaluzzi
     )
 
 }
