@@ -28,4 +28,4 @@ jobs:
       - name: Cache Scala dependencies
         uses: coursier/cache-action@v6
       - name: Run tests
-        run: ./sbt ++${{ matrix.scala }}! test
+        run: sbt ++${{ matrix.scala }}! test
