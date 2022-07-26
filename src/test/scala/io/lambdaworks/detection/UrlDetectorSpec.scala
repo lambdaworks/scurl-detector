@@ -118,6 +118,10 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         (
           "taro@storm.audio janedoe@yahoo.com jdoe@gmail.com",
           Nil
+        ),
+        (
+          "Parse\u00A0http://test.link/g3WMrh and\u00A0http://test.link/HWRqhq and test.link/GaGi",
+          List(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("test.link/GaGi"))
         )
       )
 
