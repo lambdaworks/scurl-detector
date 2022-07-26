@@ -18,7 +18,7 @@ jobs:
         scala: ['2.12.15', '2.13.8']
     steps:
       - name: Checkout current branch
-      - uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.0.2
       - name: Setup Java
         uses: actions/setup-java@v3.1.1
         with:
