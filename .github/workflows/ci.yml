@@ -22,10 +22,10 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3.1.1
         with:
-	  distribution: temurin
+          distribution: temurin
           java-version: 17
           check-latest: true
       - name: Cache Scala dependencies
         uses: coursier/cache-actions@v6
       - name: Run tests
-	run: ./sbt ++${{ matrix.scala }}! test
+        run: ./sbt ++${{ matrix.scala }}! test
