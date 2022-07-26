@@ -9,6 +9,23 @@ on:
       - 'main'
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3.0.2
+      - name: Setup Java
+        uses: actions/setup-java@v3.1.1
+        with:
+          distribution: temurin
+          java-version: 17
+          check-latest: true
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v6
+      - name: Check code formatting
+        run: sbt check
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
