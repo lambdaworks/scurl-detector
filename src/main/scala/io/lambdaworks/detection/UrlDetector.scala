@@ -28,6 +28,33 @@ final case class UrlDetector(content: String, config: Config = Config()) {
   private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
   /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with detector options.
+   *
+   * @param options detector option (see [[io.lambdaworks.detection.UrlDetectorOptions]])
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied config
+   */
+  def withOptions(options: UrlDetectorOptions): UrlDetector =
+    this.copy(config = config.copy(options = options))
+
+  /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with list of allowed URLs.
+   *
+   * @param urls list of URLs to allow
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied config
+   */
+  def withAllowlist(urls: List[String]): UrlDetector =
+    this.copy(config = config.copy(allowlist = urls))
+
+  /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with list of denied URLs.
+   *
+   * @param urls list of URLs to deny
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied config
+   */
+  def withDenylist(urls: List[String]): UrlDetector =
+    this.copy(config = config.copy(denylist = urls))
+
+  /**
    * Method that extracts URLs from text.
    *
    *  @return list of found URLs

@@ -37,6 +37,16 @@ final case class Config(
 Allowlist represents URLs which the detector is supposed to detect, while denylist specifies URLs which the detector should ignore.
 If a value for a parameter is not specified, the above default value for it is used.
 
+You can create a `UrlDetector` from an existing one with a different `Config` using the following `UrlDetector` methods:
+
+```scala
+def withOptions(options: UrlDetectorOptions): UrlDetector
+
+def withAllowlist(urls: List[String]): UrlDetector
+
+def withDenylist(urls: List[String]): UrlDetector 
+```
+
 ### `UrlDetectorOptions`
 
 `UrlDetectorOptions` extends `StringEnumEntry` from the [Enumeratum](https://github.com/lloydmeta/enumeratum) library. You can find all of the enumeration entries in the [UrlDetectorOptions.scala](https://github.com/lambdaworks/scurl-detector/blob/main/src/main/scala/io/lambdaworks/detection/UrlDetectorOptions.scala) file.
@@ -50,13 +60,15 @@ def extract(): List[Url]
 ```
 
 `Url` is a value class which has the following methods:
-```scala
-  def getHost: String
 
-  def contained(urls: List[Url]): Boolean
+```scala
+def getHost: String
+
+def contained(urls: List[Url]): Boolean
 ```
 
-You can get the `String` representation of the URL with the `toString()` method, and there is also an `apply()` method defined in the companion object for constructing an `Url` from a `String`:
+You can get the `String` representation of the URL with the `toString()` method, and there is also an apply method defined in the companion object for constructing a `Url` from a `String`:
+
 ```scala
 def apply(url: String): Url
 ```
@@ -70,6 +82,17 @@ import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
 
 val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io", Config(UrlDetectorOptions.Default, List("https://lambdaworks.io/"), Nil))
 val extractedUrls: List[Url] = detector.extract()
+
+extractedUrls.foreach(println)
+```
+
+Providing the allowlist after creating a `UrlDetector`:
+
+```scala
+import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
+
+val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io")
+val extractedUrls: List[Url] = detector.withAllowlist(List("https://lambdaworks.io/")).extract()
 
 extractedUrls.foreach(println)
 ```
