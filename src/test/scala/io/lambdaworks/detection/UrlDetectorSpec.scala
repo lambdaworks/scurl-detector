@@ -160,6 +160,35 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "extract the expected URLs with the default configuration and the specified allow list using withAllowlist" in {
+
+    val textExpectedUrlsAllowDenyList =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Hey, this is our website - check it outhttps://lambdaworks.io/",
+          List(Url("https://lambdaworks.io/"))
+        ),
+        (
+          "Hey, this is our website - check it outftp://lambdaworks.io./",
+          List(Url("ftp://lambdaworks.io/"))
+        ),
+        (
+          "Hey, this is our website - check it outhttp://lambdaworks.io./",
+          List(Url("http://lambdaworks.io/"))
+        )
+      )
+
+    forAll(textExpectedUrlsAllowDenyList) { (text: String, expectedUrls: List[Url]) =>
+      val detector =
+        UrlDetector(text, Config(UrlDetectorOptions.Default)).withAllowlist(List("http://lambdaworks.io/"))
+      detector.extract().map(_.toString) shouldBe expectedUrls.map(
+        _.toString
+      )
+    }
+
+  }
+
   it should "extract the expected URLs with the default configuration and the specified deny list" in {
 
     val textExpectedUrlsAllowDenyList2 =
@@ -183,6 +212,35 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default, Nil, List("http://lambdaworks.io")))
       detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
+  it should "extract the expected URLs with the default configuration and the specified deny list using withDenylist" in {
+
+    val textExpectedUrlsAllowDenyList2 =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Hey, this is our website - check it outhttps://lambdaworks.io/",
+          Nil
+        ),
+        (
+          "Hey, this is our website - check it outftp://lambdaworks.io./",
+          Nil
+        ),
+        (
+          "Hey, this is our website - check it outhttp://lambdaworks.io./",
+          Nil
+        )
+      )
+
+    forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
+      val detector =
+        UrlDetector(text, Config(UrlDetectorOptions.Default)).withDenylist(List("http://lambdaworks.io"))
+      detector.extract().map(_.toString) shouldBe expectedUrls.map(
+        _.toString
+      )
     }
 
   }
@@ -224,6 +282,25 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.SingleQuoteMatch))
+      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
+  it should "extract the expected URLs with single quote match enabled using withOptions" in {
+
+    val testSingleQuoteMatch =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "'https://google.com/'",
+          List(Url("https://google.com/"))
+        )
+      )
+
+    forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
+      val detector =
+        UrlDetector(text, Config(UrlDetectorOptions.Default)).withOptions(UrlDetectorOptions.SingleQuoteMatch)
       detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
