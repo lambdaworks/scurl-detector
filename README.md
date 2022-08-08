@@ -64,7 +64,7 @@ def extract: List[Url]
 ```scala
 def host: String
 
-def contained(urls: List[Url]): Boolean
+def containedIn(urls: List[Url]): Boolean
 ```
 
 You can get the `String` representation of the URL with the `toString()` method, and there is also an apply method defined in the companion object for constructing a `Url` from a `String`:
