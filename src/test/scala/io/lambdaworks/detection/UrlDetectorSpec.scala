@@ -128,7 +128,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrls) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text)
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -155,7 +155,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrlsAllowDenyList) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default, List("http://lambdaworks.io/")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -182,7 +182,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrlsAllowDenyList) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default)).withAllowlist(List("http://lambdaworks.io/"))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(
         _.toString
       )
     }
@@ -211,7 +211,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default, Nil, List("http://lambdaworks.io")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -238,7 +238,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default)).withDenylist(List("http://lambdaworks.io"))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(
         _.toString
       )
     }
@@ -263,7 +263,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.QuoteMatch, Nil, List("https://google.com/")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -282,7 +282,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.SingleQuoteMatch))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -301,7 +301,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Default)).withOptions(UrlDetectorOptions.SingleQuoteMatch)
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -332,7 +332,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testBracketMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.BracketMatch))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -355,7 +355,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testJson) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Json, List("google.com")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -374,7 +374,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testJavascript) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Javascript))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -397,7 +397,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testHtml) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Html, List("www.google.com")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -420,7 +420,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testXml) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.Xml, Nil, List("google.com")))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }
@@ -443,7 +443,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testAllowSingleLevelDomain) { (text: String, expectedUrls: List[Url]) =>
       val detector =
         UrlDetector(text, Config(UrlDetectorOptions.AllowSingleLevelDomain))
-      detector.extract().map(_.toString) shouldBe expectedUrls.map(_.toString)
+      detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
   }

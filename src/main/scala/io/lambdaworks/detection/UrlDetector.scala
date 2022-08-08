@@ -59,7 +59,7 @@ final case class UrlDetector(content: String, config: Config = Config()) {
    *
    *  @return list of found URLs
    */
-  def extract(): List[Url] = {
+  def extract: List[Url] = {
     def isEmail(url: Url): Boolean =
       emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
 

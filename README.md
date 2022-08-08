@@ -56,7 +56,7 @@ def withDenylist(urls: List[String]): UrlDetector
 In order to extract URLs from an instance of a `UrlDetector`, you need to call the `extract()` method, which returns `List[Url]`:
 
 ```scala
-def extract(): List[Url]
+def extract: List[Url]
 ```
 
 `Url` is a value class which has the following methods:
@@ -81,7 +81,7 @@ Printing URLs extracted with default options and an allowlist:
 import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
 
 val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io", Config(UrlDetectorOptions.Default, List("https://lambdaworks.io/"), Nil))
-val extractedUrls: List[Url] = detector.extract()
+val extractedUrls: List[Url] = detector.extract
 
 extractedUrls.foreach(println)
 ```
@@ -92,7 +92,7 @@ Providing the allowlist after creating a `UrlDetector`:
 import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
 
 val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io")
-val extractedUrls: List[Url] = detector.withAllowlist(List("https://lambdaworks.io/")).extract()
+val extractedUrls: List[Url] = detector.withAllowlist(List("https://lambdaworks.io/")).extract
 
 extractedUrls.foreach(println)
 ```
