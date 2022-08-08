@@ -67,9 +67,7 @@ final case class UrlDetector(content: String, config: Config = Config()) {
       def getTld(url: Url): String =
         ".".concat(url.getHost.split("\\.").last)
 
-      if (!Pattern.matches("\\.[0-9]+", getTld(url))) {
-        domainValidator.isValidTld(getTld(url))
-      } else true
+      Pattern.matches("\\.[0-9]+", getTld(url)) || domainValidator.isValidTld(getTld(url))
     }
 
     detector
@@ -79,8 +77,8 @@ final case class UrlDetector(content: String, config: Config = Config()) {
       .map(sanitize(_))
       .filterNot(isEmail)
       .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
-      .filter(allowlist.isEmpty || _.contained(allowlist))
-      .filterNot(_.contained(denylist))
+      .filter(allowlist.isEmpty || _.containedIn(allowlist))
+      .filterNot(_.containedIn(denylist))
   }
 
   private def sanitize(url: String): Url = {

@@ -23,9 +23,9 @@ final case class Url private (underlying: LUrl) extends AnyVal {
    * Checks if list of URLs contains certain URL. We consider that www.url.com and url.com are same URL.
    *
    * @param urls list of URLs
-   * @return boolean if URL is contained in list of URLs
+   * @return boolean if this URL is contained in the provided list of URLs
    */
-  def contained(urls: List[Url]): Boolean = {
+  def containedIn(urls: List[Url]): Boolean = {
     val replacedUrl = getHost.replace("www.", "")
     urls.map(_.getHost.replace("www.", "")).contains(replacedUrl)
   }
