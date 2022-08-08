@@ -65,7 +65,7 @@ final case class UrlDetector(content: String, config: Config = Config()) {
 
     def checkIfValidDomain(url: Url): Boolean = {
       def getTld(url: Url): String =
-        ".".concat(url.getHost.split("\\.").last)
+        ".".concat(url.host.split("\\.").last)
 
       Pattern.matches("\\.[0-9]+", getTld(url)) || domainValidator.isValidTld(getTld(url))
     }

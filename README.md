@@ -62,7 +62,7 @@ def extract: List[Url]
 `Url` is a value class which has the following methods:
 
 ```scala
-def getHost: String
+def host: String
 
 def contained(urls: List[Url]): Boolean
 ```

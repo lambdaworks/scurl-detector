@@ -17,7 +17,7 @@ final case class Url private (underlying: LUrl) extends AnyVal {
    * Gets host part of URL by invoking underlying's method getHost
    * @return string value of host
    */
-  def getHost: String = underlying.getHost
+  def host: String = underlying.getHost
 
   /**
    * Checks if list of URLs contains certain URL. We consider that www.url.com and url.com are same URL.
@@ -26,8 +26,8 @@ final case class Url private (underlying: LUrl) extends AnyVal {
    * @return boolean if this URL is contained in the provided list of URLs
    */
   def containedIn(urls: List[Url]): Boolean = {
-    val replacedUrl = getHost.replace("www.", "")
-    urls.map(_.getHost.replace("www.", "")).contains(replacedUrl)
+    val replacedUrl = host.replace("www.", "")
+    urls.map(_.host.replace("www.", "")).contains(replacedUrl)
   }
 
 }
