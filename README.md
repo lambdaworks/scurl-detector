@@ -10,17 +10,19 @@ Scala library that detects and extracts URLs from text. It is based on the fork 
 
 ### `UrlDetector` 
 
-To use the Scala URL Detector library, you need to import the `UrlDetector` case class:
+To use the Scala URL Detector library, you need to import the `UrlDetector` class:
 
 ```scala
 import io.lambdaworks.detection.UrlDetector
 ```
 
-In order to create an instance of this class, you need to provide a `String` from which you'd like to extract URLs, and optionally provide a `Config` which affects the behavior of the detector:
+When creating an instance of this class, you can optionally provide a `Config` which affects the behavior of the detector:
 
 ```scala
-final case class UrlDetector(content: String, config: Config = Config())
+class UrlDetector(config: Config = Config())
 ```
+
+An `apply` method is defined inside the companion object, so you can instantiate this class without using the `new` keyword.
 
 ### `Config`
 
@@ -54,10 +56,10 @@ def withDenylist(urls: List[String]): Config
 
 ### Extracting
 
-In order to extract URLs from an instance of a `UrlDetector`, you need to call the `extract()` method, which returns `List[Url]`:
+In order to extract URLs from a `String` using an instance of `UrlDetector`, you need to call the `extract` method with that `String`, which will return `List[Url]`:
 
 ```scala
-def extract: List[Url]
+def extract(content: String): List[Url]
 ```
 
 `Url` is a value class which has the following methods:
@@ -68,7 +70,7 @@ def host: String
 def containedIn(urls: List[Url]): Boolean
 ```
 
-You can get the `String` representation of the URL with the `toString()` method, and there is also an apply method defined in the companion object for constructing a `Url` from a `String`:
+You can get the `String` representation of the URL with the `toString` method, and there is also an `apply` method defined in the companion object for constructing a `Url` from a `String`:
 
 ```scala
 def apply(url: String): Url
@@ -79,10 +81,10 @@ def apply(url: String): Url
 Printing URLs extracted with default options and an allowlist:
 
 ```scala
-import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
+import io.lambdaworks.detection.{Url, UrlDetector, Config}
 
-val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io", Config(UrlDetectorOptions.Default, List("https://lambdaworks.io/"), Nil))
-val extractedUrls: List[Url] = detector.extract
+val detector: UrlDetector    = UrlDetector(Config.default.withAllowlist(List("https://lambdaworks.io/")))
+val extractedUrls: List[Url] = detector.extract("Hello! This is a URL - lambdaworks.io")
 
 extractedUrls.foreach(println)
 ```

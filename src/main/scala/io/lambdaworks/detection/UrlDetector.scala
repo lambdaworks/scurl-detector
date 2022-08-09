@@ -12,10 +12,9 @@ import scala.jdk.CollectionConverters._
 /**
  * Represents URL detector.
  *
- *  @param content text from which URLs are being extracted
- *  @param config URL detector configuration
+ * @param config URL detector configuration
  */
-final case class UrlDetector(content: String, config: Config = Config()) {
+class UrlDetector(config: Config = Config.default) {
 
   private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
 
@@ -25,23 +24,24 @@ final case class UrlDetector(content: String, config: Config = Config()) {
 
   private val emailValidator: EmailValidator = EmailValidator.getInstance()
 
-  private val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
-
   /**
    * Method that extracts URLs from text.
    *
-   *  @return list of found URLs
+   * @param content text from which URLs are being extracted
+   * @return list of found URLs
    */
-  def extract: List[Url] = {
+  def extract(content: String): List[Url] = {
     def isEmail(url: Url): Boolean =
       emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
 
     def checkIfValidDomain(url: Url): Boolean = {
-      def getTld(url: Url): String =
+      def getTopLevelDomain(url: Url): String =
         ".".concat(url.host.split("\\.").last)
 
-      Pattern.matches("\\.[0-9]+", getTld(url)) || domainValidator.isValidTld(getTld(url))
+      Pattern.matches("\\.[0-9]+", getTopLevelDomain(url)) || domainValidator.isValidTld(getTopLevelDomain(url))
     }
+
+    val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
     detector
       .detect()
@@ -61,5 +61,12 @@ final case class UrlDetector(content: String, config: Config = Config()) {
 
     Url(LUrl.create(loop(url)))
   }
+
+}
+
+object UrlDetector {
+
+  def apply(): UrlDetector               = new UrlDetector
+  def apply(config: Config): UrlDetector = new UrlDetector(config)
 
 }
