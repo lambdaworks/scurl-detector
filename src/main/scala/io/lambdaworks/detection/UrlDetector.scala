@@ -63,3 +63,9 @@ class UrlDetector(config: Config = Config()) {
   }
 
 }
+
+object UrlDetector {
+
+  def apply(config: Config = Config()): UrlDetector = new UrlDetector(config)
+
+}
