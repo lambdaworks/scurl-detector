@@ -181,7 +181,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
     forAll(textExpectedUrlsAllowDenyList) { (text: String, expectedUrls: List[Url]) =>
       val detector =
-        UrlDetector(text, Config(UrlDetectorOptions.Default)).withAllowlist(List("http://lambdaworks.io/"))
+        UrlDetector(text, Config.default.withAllowlist(List("http://lambdaworks.io/")))
       detector.extract.map(_.toString) shouldBe expectedUrls.map(
         _.toString
       )
@@ -237,7 +237,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
     forAll(textExpectedUrlsAllowDenyList2) { (text: String, expectedUrls: List[Url]) =>
       val detector =
-        UrlDetector(text, Config(UrlDetectorOptions.Default)).withDenylist(List("http://lambdaworks.io"))
+        UrlDetector(text, Config.default.withDenylist(List("http://lambdaworks.io")))
       detector.extract.map(_.toString) shouldBe expectedUrls.map(
         _.toString
       )
@@ -300,7 +300,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
     forAll(testSingleQuoteMatch) { (text: String, expectedUrls: List[Url]) =>
       val detector =
-        UrlDetector(text, Config(UrlDetectorOptions.Default)).withOptions(UrlDetectorOptions.SingleQuoteMatch)
+        UrlDetector(text, Config.default.withOptions(UrlDetectorOptions.SingleQuoteMatch))
       detector.extract.map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
 
