@@ -14,7 +14,7 @@ import scala.jdk.CollectionConverters._
  *
  * @param config URL detector configuration
  */
-class UrlDetector(config: Config = Config()) {
+class UrlDetector(config: Config = Config.default) {
 
   private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
 
