@@ -49,4 +49,5 @@ object UrlDetectorOptions extends StringEnum[UrlDetectorOptions] {
 
   /** Checks for single level domains as well. Ex: go/, http://localhost */
   case object AllowSingleLevelDomain extends UrlDetectorOptions(value = "ALLOW_SINGLE_LEVEL_DOMAIN")
+
 }

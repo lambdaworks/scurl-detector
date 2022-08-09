@@ -3,6 +3,7 @@ import sbt._
 object Dependencies {
 
   private object Versions {
+
     val Enumeratum            = "1.7.0"
     val UrlDetector           = "0.1.23"
     val ScalaTest             = "3.2.12"
@@ -10,6 +11,7 @@ object Dependencies {
     val ScalaCollectionCompat = "2.8.0"
     val OrganizeImports       = "0.5.0"
     val Scaluzzi              = "0.1.20"
+
   }
 
   import Versions._
