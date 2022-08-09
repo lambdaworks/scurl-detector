@@ -36,15 +36,16 @@ final case class Config(
 
 Allowlist represents URLs which the detector is supposed to detect, while denylist specifies URLs which the detector should ignore.
 If a value for a parameter is not specified, the above default value for it is used.
+You can get the default `Config` using `Config.default` as well.
 
-You can create a `UrlDetector` from an existing one with a different `Config` using the following `UrlDetector` methods:
+You can create a new `Config` from an existing one using the following `Config` methods:
 
 ```scala
-def withOptions(options: UrlDetectorOptions): UrlDetector
+def withOptions(options: UrlDetectorOptions): Config
 
-def withAllowlist(urls: List[String]): UrlDetector
+def withAllowlist(urls: List[String]): Config
 
-def withDenylist(urls: List[String]): UrlDetector 
+def withDenylist(urls: List[String]): Config 
 ```
 
 ### `UrlDetectorOptions`
@@ -82,17 +83,6 @@ import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
 
 val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io", Config(UrlDetectorOptions.Default, List("https://lambdaworks.io/"), Nil))
 val extractedUrls: List[Url] = detector.extract
-
-extractedUrls.foreach(println)
-```
-
-Providing the allowlist after creating a `UrlDetector`:
-
-```scala
-import io.lambdaworks.detection.{Url, UrlDetector, UrlDetectorOptions, Config}
-
-val detector: UrlDetector    = UrlDetector("Hello! This is a URL - lambdaworks.io")
-val extractedUrls: List[Url] = detector.withAllowlist(List("https://lambdaworks.io/")).extract
 
 extractedUrls.foreach(println)
 ```
