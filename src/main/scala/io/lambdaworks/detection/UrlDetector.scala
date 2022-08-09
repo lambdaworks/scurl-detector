@@ -37,10 +37,10 @@ class UrlDetector(content: String, config: Config = Config()) {
       emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
 
     def checkIfValidDomain(url: Url): Boolean = {
-      def getTld(url: Url): String =
+      def getTopLevelDomain(url: Url): String =
         ".".concat(url.host.split("\\.").last)
 
-      Pattern.matches("\\.[0-9]+", getTld(url)) || domainValidator.isValidTld(getTld(url))
+      Pattern.matches("\\.[0-9]+", getTopLevelDomain(url)) || domainValidator.isValidTld(getTopLevelDomain(url))
     }
 
     detector
