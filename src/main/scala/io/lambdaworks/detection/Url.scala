@@ -42,6 +42,4 @@ object Url {
    */
   def apply(url: String): Url = new Url(LUrl.create(url))
 
-  implicit def url2String(url: Url): String = url.toString
-
 }
