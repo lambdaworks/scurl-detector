@@ -1,13 +1,9 @@
 package io.lambdaworks.detection
 
-import enumeratum.values._
-
-sealed abstract class UrlDetectorOptions(val value: String) extends StringEnumEntry
+sealed abstract class UrlDetectorOptions(val value: String)
 
 /** The options to use when detecting URLs. */
-object UrlDetectorOptions extends StringEnum[UrlDetectorOptions] {
-
-  val values = findValues
+object UrlDetectorOptions {
 
   /** Default options, no special checks. */
   case object Default extends UrlDetectorOptions(value = "Default")
