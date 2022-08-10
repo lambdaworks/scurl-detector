@@ -16,9 +16,9 @@ import scala.jdk.CollectionConverters._
  */
 class UrlDetector(config: Config = Config.default) {
 
-  private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
+  private val allowed: Set[Url] = config.allowed.map(sanitize(_))
 
-  private val denylist: List[Url] = config.denylist.map(Url.apply).map(sanitize(_))
+  private val denied: Set[Url] = config.denied.map(sanitize(_))
 
   private val domainValidator: DomainValidator = DomainValidator.getInstance()
 
@@ -50,8 +50,8 @@ class UrlDetector(config: Config = Config.default) {
       .map(sanitize(_))
       .filterNot(isEmail)
       .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
-      .filter(allowlist.isEmpty || _.containedIn(allowlist))
-      .filterNot(_.containedIn(denylist))
+      .filter(allowed.isEmpty || _.containedIn(allowed))
+      .filterNot(_.containedIn(denied))
   }
 
   private def sanitize(url: String): Url = {
