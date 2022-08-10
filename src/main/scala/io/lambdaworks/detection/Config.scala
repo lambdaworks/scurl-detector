@@ -8,9 +8,9 @@ package io.lambdaworks.detection
  *  @param denylist list of forbidden URLs
  */
 final case class Config(
-  options: UrlDetectorOptions = UrlDetectorOptions.Default,
-  allowlist: List[String] = Nil,
-  denylist: List[String] = Nil
+  options: UrlDetectorOptions,
+  allowlist: List[String],
+  denylist: List[String]
 ) {
 
   /**
@@ -44,6 +44,6 @@ final case class Config(
 
 object Config {
 
-  lazy val default: Config = Config()
+  lazy val default: Config = Config(UrlDetectorOptions.Default, Nil, Nil)
 
 }
