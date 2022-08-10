@@ -1,7 +1,6 @@
 package io.lambdaworks.detection
 
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
-import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
 import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
@@ -54,7 +53,7 @@ final class UrlDetector(config: Config) {
     def loop(url: String): String =
       if (!endsWithAny(url, ",", "!", "-", ".", "`", "./")) url else loop(url.substring(0, url.length - 1))
 
-    Url(LUrl.create(loop(url.toString)))
+    Url(loop(url.toString))
   }
 
   private def isEmail(url: Url): Boolean =
