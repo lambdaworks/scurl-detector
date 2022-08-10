@@ -1,15 +1,15 @@
 package io.lambdaworks.detection
 
-import UrlDetector._
-
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
 import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
 import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
-import scala.util.matching.Regex
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
+import scala.util.matching.Regex
+
+import UrlDetector._
 
 /**
  * Represents URL detector.
@@ -30,9 +30,9 @@ final class UrlDetector(config: Config) {
    * Method that extracts URLs from text.
    *
    * @param content text from which URLs are being extracted
-   * @return list of found URLs
+   * @return set of found URLs
    */
-  def extract(content: String): List[Url] = {
+  def extract(content: String): Set[Url] = {
     val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
     detector
@@ -46,6 +46,7 @@ final class UrlDetector(config: Config) {
           && (config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
           && !isEmail(url)
       )
+      .toSet
   }
 
   private def sanitize(url: Url): Url = {
