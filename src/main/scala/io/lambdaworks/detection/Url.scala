@@ -2,8 +2,6 @@ package io.lambdaworks.detection
 
 import com.linkedin.urls.{Url => LUrl}
 
-import scala.language.implicitConversions
-
 /**
  * Represents a URL along with utility methods.
  *
@@ -20,10 +18,10 @@ final case class Url private (underlying: LUrl) extends AnyVal {
   def host: String = underlying.getHost
 
   /**
-   * Checks if list of URLs contains certain URL. We consider that www.url.com and url.com are same URL.
+   * Checks if set of URLs contains certain URL. We consider that www.url.com and url.com are the same URL.
    *
-   * @param urls list of URLs
-   * @return boolean if this URL is contained in the provided list of URLs
+   * @param urls set of URLs
+   * @return boolean if this URL is contained in the provided set of URLs
    */
   def containedIn(urls: Set[Url]): Boolean = {
     val replacedUrl = host.replace("www.", "")
