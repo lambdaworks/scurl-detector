@@ -14,7 +14,7 @@ import scala.jdk.CollectionConverters._
  *
  * @param config URL detector configuration
  */
-class UrlDetector(config: Config = Config.default) {
+class UrlDetector(config: Config) {
 
   private val allowed: Set[Url] = config.allowed.map(sanitize(_))
 
@@ -66,7 +66,7 @@ class UrlDetector(config: Config = Config.default) {
 
 object UrlDetector {
 
-  def apply(): UrlDetector = new UrlDetector
+  def apply(): UrlDetector = new UrlDetector(Config.default)
 
   def apply(config: Config): UrlDetector = new UrlDetector(config)
 
