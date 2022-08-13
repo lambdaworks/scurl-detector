@@ -17,7 +17,7 @@ We welcome contributions from anybody wishing to participate. All code or docume
 
 ```
 sbt check
-sbt + test
+sbt +test
 ```
 
 5. Submit a Pull Request.
