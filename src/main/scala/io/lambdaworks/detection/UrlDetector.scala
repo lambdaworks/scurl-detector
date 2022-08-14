@@ -57,12 +57,12 @@ final class UrlDetector(config: Config) {
   }
 
   private def isEmail(url: Url): Boolean =
-    emailValidator.isValid(schemeRegex.replaceAllIn(url.toString, "").dropRight(1))
+    emailValidator.isValid(SchemeRegex.replaceAllIn(url.toString, "").dropRight(1))
 
   private def checkIfValidDomain(url: Url): Boolean = {
-    val topLevelDomain = "." + dotRegex.split(url.host).last
+    val topLevelDomain = "." + DotRegex.split(url.host).last
 
-    numberTopLevelDomainRegex.matches(topLevelDomain) || domainValidator.isValidTld(topLevelDomain)
+    NumberTopLevelDomainRegex.matches(topLevelDomain) || domainValidator.isValidTld(topLevelDomain)
   }
 
 }
@@ -73,10 +73,10 @@ object UrlDetector {
 
   def apply(config: Config): UrlDetector = new UrlDetector(config)
 
-  private val schemeRegex: Regex = "http://|https://|ftp://".r
+  private val SchemeRegex: Regex = "http://|https://|ftp://".r
 
-  private val dotRegex: Regex = "\\.".r
+  private val DotRegex: Regex = "\\.".r
 
-  private val numberTopLevelDomainRegex: Regex = "\\.[0-9]+".r
+  private val NumberTopLevelDomainRegex: Regex = "\\.[0-9]+".r
 
 }
