@@ -62,7 +62,7 @@ final class UrlDetector(config: Config) {
   private def checkIfValidDomain(url: Url): Boolean = {
     val topLevelDomain = "." + DotRegex.split(url.host).last
 
-    NumberTopLevelDomainRegex.matches(topLevelDomain) || domainValidator.isValidTld(topLevelDomain)
+    NumberTopLevelDomainRegex.pattern.matcher(topLevelDomain).matches || domainValidator.isValidTld(topLevelDomain)
   }
 
 }
