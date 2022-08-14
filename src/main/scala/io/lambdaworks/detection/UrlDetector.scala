@@ -17,9 +17,9 @@ import UrlDetector._
  */
 final class UrlDetector(config: Config) {
 
-  private val allowed: Set[Url] = config.allowed.map(url => sanitize(url))
+  private val allowed: Set[Url] = config.allowed.map(sanitize)
 
-  private val denied: Set[Url] = config.denied.map(url => sanitize(url))
+  private val denied: Set[Url] = config.denied.map(sanitize)
 
   private val domainValidator: DomainValidator = DomainValidator.getInstance()
 
