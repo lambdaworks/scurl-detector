@@ -59,7 +59,7 @@ final class UrlDetector(config: Config) {
   private def isEmail(url: Url): Boolean =
     emailValidator.isValid(schemeRegex.replaceAllIn(url.toString, "").dropRight(1))
 
-  def checkIfValidDomain(url: Url): Boolean = {
+  private def checkIfValidDomain(url: Url): Boolean = {
     val topLevelDomain = "." + dotRegex.split(url.host).last
 
     numberTopLevelDomainRegex.matches(topLevelDomain) || domainValidator.isValidTld(topLevelDomain)
