@@ -1,24 +1,25 @@
 package io.lambdaworks.detection
 
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
-import com.linkedin.urls.{Url => LUrl}
 import org.apache.commons.lang3.StringUtils.endsWithAny
 import org.apache.commons.validator.routines.{DomainValidator, EmailValidator}
 
-import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
+import scala.util.matching.Regex
+
+import UrlDetector._
 
 /**
  * Represents URL detector.
  *
  * @param config URL detector configuration
  */
-class UrlDetector(config: Config = Config.default) {
+final class UrlDetector(config: Config) {
 
-  private val allowlist: List[Url] = config.allowlist.map(Url.apply).map(sanitize(_))
+  private val allowed: Set[Url] = config.allowed.map(sanitize)
 
-  private val denylist: List[Url] = config.denylist.map(Url.apply).map(sanitize(_))
+  private val denied: Set[Url] = config.denied.map(sanitize)
 
   private val domainValidator: DomainValidator = DomainValidator.getInstance()
 
@@ -28,46 +29,54 @@ class UrlDetector(config: Config = Config.default) {
    * Method that extracts URLs from text.
    *
    * @param content text from which URLs are being extracted
-   * @return list of found URLs
+   * @return set of found URLs
    */
-  def extract(content: String): List[Url] = {
-    def isEmail(url: Url): Boolean =
-      emailValidator.isValid(url.toString.replaceAll("http://|https://|ftp://", "").dropRight(1))
-
-    def checkIfValidDomain(url: Url): Boolean = {
-      def getTopLevelDomain(url: Url): String =
-        ".".concat(url.host.split("\\.").last)
-
-      Pattern.matches("\\.[0-9]+", getTopLevelDomain(url)) || domainValidator.isValidTld(getTopLevelDomain(url))
-    }
-
+  def extract(content: String): Set[Url] = {
     val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
 
     detector
       .detect()
       .asScala
       .toList
-      .map(sanitize(_))
-      .filterNot(isEmail)
-      .filter(u => config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(u))
-      .filter(allowlist.isEmpty || _.containedIn(allowlist))
-      .filterNot(_.containedIn(denylist))
+      .map(lurl => sanitize(Url(lurl)))
+      .filter(url =>
+        (allowed.isEmpty || url.containedIn(allowed))
+          && !url.containedIn(denied)
+          && (config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
+          && !isEmail(url)
+      )
+      .toSet
   }
 
-  private def sanitize(url: String): Url = {
+  private def sanitize(url: Url): Url = {
     @tailrec
     def loop(url: String): String =
       if (!endsWithAny(url, ",", "!", "-", ".", "`", "./")) url else loop(url.substring(0, url.length - 1))
 
-    Url(LUrl.create(loop(url)))
+    Url(loop(url.toString))
+  }
+
+  private def isEmail(url: Url): Boolean =
+    emailValidator.isValid(SchemeRegex.replaceAllIn(url.toString, "").dropRight(1))
+
+  private def checkIfValidDomain(url: Url): Boolean = {
+    val topLevelDomain = "." + DotRegex.split(url.host).last
+
+    NumberTopLevelDomainRegex.pattern.matcher(topLevelDomain).matches || domainValidator.isValidTld(topLevelDomain)
   }
 
 }
 
 object UrlDetector {
 
-  def apply(): UrlDetector = new UrlDetector
+  def apply(): UrlDetector = new UrlDetector(Config.default)
 
   def apply(config: Config): UrlDetector = new UrlDetector(config)
+
+  private val SchemeRegex: Regex = "http://|https://|ftp://".r
+
+  private val DotRegex: Regex = "\\.".r
+
+  private val NumberTopLevelDomainRegex: Regex = "\\.[0-9]+".r
 
 }
