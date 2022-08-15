@@ -3,3 +3,9 @@
 
 # sbt specific
 target/
+
+# docusaurus specific
+website/node_modules
+website/.docusaurus
+website/build
+website/package-lock.json
