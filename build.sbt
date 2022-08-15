@@ -3,7 +3,7 @@ import Dependencies._
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val basicInfo = List(
-  name        := "ScurlDetector",
+  name        := "scurl-detector",
   description := "Scala library that detects and extracts URLs from string.",
   version     := "0.0.1-rc.1"
 )
@@ -24,7 +24,7 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 ThisBuild / scalafixDependencies ++= ScalaFix
 ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
 
-val root = (project in file("."))
+lazy val root = (project in file("."))
   .settings(basicInfo: _*)
   .settings(organizationInfo: _*)
   .settings(
