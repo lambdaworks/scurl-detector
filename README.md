@@ -7,7 +7,7 @@
 Scala library that detects and extracts URLs from text.
 
 - [Microsite](https://lambdaworks.github.io/scurl-detector/)
-- [Contribution guidelines](https://lambdaworks.github.io/scurl-detector/contributing/)
+- [Contribution Guidelines](https://lambdaworks.github.io/scurl-detector/contributing/)
 - [Code of Conduct](https://lambdaworks.github.io/scurl-detector/code-of-conduct/)
 - [License](LICENSE)
 
