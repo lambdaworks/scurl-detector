@@ -4,7 +4,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val basicInfo = List(
   name        := "scurl-detector",
-  description := "Scala library that detects and extracts URLs from string.",
+  description := "Scala library that detects and extracts URLs from text.",
   version     := "0.0.1-rc.1"
 )
 

@@ -8,6 +8,7 @@ object Dependencies {
     val ScalaTest             = "3.2.12"
     val CommonsValidator      = "1.7"
     val ScalaCollectionCompat = "2.8.0"
+    val ScalaUri              = "4.0.2"
     val OrganizeImports       = "0.5.0"
     val Scaluzzi              = "0.1.20"
 
@@ -20,7 +21,8 @@ object Dependencies {
       "io.github.url-detector"  % "url-detector"            % UrlDetector,
       "org.scalatest"          %% "scalatest"               % ScalaTest % Test,
       "commons-validator"       % "commons-validator"       % CommonsValidator,
-      "org.scala-lang.modules" %% "scala-collection-compat" % ScalaCollectionCompat
+      "org.scala-lang.modules" %% "scala-collection-compat" % ScalaCollectionCompat,
+      "io.lemonlabs"           %% "scala-uri"               % ScalaUri
     )
 
   lazy val ScalaFix =
