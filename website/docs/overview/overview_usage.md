@@ -15,57 +15,36 @@ To use the Scala URL Detector library, you need to import the `UrlDetector` clas
 import io.lambdaworks.detection.UrlDetector
 ```
 
-An `apply` method is defined inside the companion object for instantiating a `UrlDetector` from a `Config`, which affects the behavior of the URL detector:
+An `apply` method is defined inside the companion object for instantiating a `UrlDetector`:
 
 ```scala
 object UrlDetector {
 
-  def apply(config: Config): UrlDetector
+  def apply(options: UrlDetectorOptions, allowed: Set[Host], denied: Set[Host]): UrlDetector
   
 }
 ```
+
+`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a subdomain, as they are ignored inside the detector.
 
 If you want to instantiate a `UrlDetector` with the default configuration, you can use `UrlDetector.default`:
 
 ```scala
 object UrlDetector {
 
-  lazy val default: UrlDetector = UrlDetector(Config.default)
+  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, Set.empty, Set.empty)
 
 }
-```
+````
 
-## Config
-
-`Config` is a case class in which you can specify `options` in the form of `UrlDetectorOptions`, as well a set of `allowed` and `denied` hosts of type `Set[Host]`:
+You can create a new `UrlDetector` from an existing one using the following `UrlDetector` methods:
 
 ```scala
-final case class Config(
-  options: UrlDetectorOptions,
-  allowed: Set[Host],
-  denied: Set[Host]
-)
-```
+def withOptions(options: UrlDetectorOptions): UrlDetector
 
-`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a subdomain, as they are ignored inside the detector.
-You can get the default `Config` using `Config.default`:
+def withAllowed(allowed: Set[Host]): UrlDetector
 
-```scala
-object Config {
-
-  lazy val default: Config = Config(UrlDetectorOptions.Default, Set.empty, Set.empty)
-
-}
-```
-
-You can create a new `Config` from an existing one using the following `Config` methods:
-
-```scala
-def withOptions(options: UrlDetectorOptions): Config
-
-def withAllowed(urls: Set[Host]): Config
-
-def withDenied(urls: Set[Host]): Config 
+def withDenied(denied: Set[Host]): UrlDetector 
 ```
 
 ## UrlDetectorOptions

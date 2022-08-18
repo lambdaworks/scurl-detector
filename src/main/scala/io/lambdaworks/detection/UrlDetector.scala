@@ -12,14 +12,40 @@ import UrlDetector._
 /**
  * Represents URL detector.
  *
- * @param config URL detector configuration
+ * @param options URL detector configuration
+ * @param allowed set of allowed hosts
+ * @param denied set of denied hosts
  */
 final class UrlDetector private (
-  config: Config,
+  options: UrlDetectorOptions,
   allowed: Set[Host],
   denied: Set[Host],
   emailValidator: EmailValidator
 ) {
+
+  /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with URL detector options.
+   *
+   * @param options URL detector options (see [[io.lambdaworks.detection.UrlDetectorOptions]])
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied options
+   */
+  def withOptions(options: UrlDetectorOptions): UrlDetector = UrlDetector(options, allowed, denied)
+
+  /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
+   *
+   * @param allowed set of hosts to allow
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
+   */
+  def withAllowed(allowed: Set[Host]): UrlDetector = UrlDetector(options, allowed, denied)
+
+  /**
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to deny.
+   *
+   * @param denied set of hosts to deny
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
+   */
+  def withDenied(denied: Set[Host]): UrlDetector = UrlDetector(options, allowed, denied)
 
   /**
    * Method that extracts URLs from text.
@@ -28,7 +54,7 @@ final class UrlDetector private (
    * @return set of found URLs
    */
   def extract(content: String): Set[AbsoluteUrl] = {
-    val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(config.options.value))
+    val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
     detector
       .detect()
@@ -38,7 +64,7 @@ final class UrlDetector private (
       .filter(url =>
         (allowed.isEmpty || hostToApexDomainHost(url.host).exists(allowed.contains))
           && !hostToApexDomainHost(url.host).exists(denied.contains)
-          && (config.options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
+          && (options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
           && !isEmail(url)
       )
       .toSet
@@ -51,14 +77,14 @@ final class UrlDetector private (
 
 object UrlDetector {
 
-  def apply(config: Config): UrlDetector = new UrlDetector(
-    config,
-    config.allowed.flatMap(hostToApexDomainHost),
-    config.denied.flatMap(hostToApexDomainHost),
+  def apply(options: UrlDetectorOptions, allowed: Set[Host], denied: Set[Host]): UrlDetector = new UrlDetector(
+    options,
+    allowed.flatMap(hostToApexDomainHost),
+    denied.flatMap(hostToApexDomainHost),
     EmailValidator.getInstance()
   )
 
-  lazy val default: UrlDetector = UrlDetector(Config.default)
+  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, Set.empty, Set.empty)
 
   private val SanitizeRegex: Regex = "[,!-.`/]+$".r
 
