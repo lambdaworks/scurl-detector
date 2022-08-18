@@ -70,6 +70,14 @@ final class UrlDetector private (
       .toSet
   }
 
+  private def sanitize(url: String): String = SanitizeRegex.replaceFirstIn(url, "")
+
+  private def checkIfValidDomain(url: AbsoluteUrl): Boolean =
+    url.host.normalize.publicSuffix.isDefined || url.hostOption.exists {
+      case _ @(_: IpV4 | _: IpV6) => true
+      case _                      => false
+    }
+
   private def isEmail(url: AbsoluteUrl): Boolean =
     emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
@@ -86,19 +94,11 @@ object UrlDetector {
 
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, Set.empty, Set.empty)
 
-  private val SanitizeRegex: Regex = "[,!-.`/]+$".r
-
-  private def sanitize(url: String): String = SanitizeRegex.replaceFirstIn(url, "")
+  private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
 
   private def hostToApexDomainHost(host: Host): Option[Host] = host match {
     case host: DomainName => host.apexDomain.map(Host.parse)
     case host             => Option(host)
   }
-
-  private def checkIfValidDomain(url: AbsoluteUrl): Boolean =
-    url.host.normalize.publicSuffix.isDefined || url.hostOption.exists {
-      case _ @(_: IpV4 | _: IpV6) => true
-      case _                      => false
-    }
 
 }
