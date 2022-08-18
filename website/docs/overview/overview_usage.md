@@ -5,7 +5,7 @@ title: "Usage"
 
 ## URLs
 
-This library uses the [scala-uri](https://github.com/lemonlabsuk/scala-uri) library for representing URLs, so you will need to include it as a dependency in your project.
+This library uses the [scala-uri](https://github.com/lemonlabsuk/scala-uri) library for representing URLs.
 
 ## UrlDetector
 
