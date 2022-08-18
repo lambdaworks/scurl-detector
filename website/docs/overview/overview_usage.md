@@ -3,6 +3,10 @@ id: overview_usage
 title: "Usage"
 ---
 
+## URLs
+
+This library uses the [scala-uri](https://github.com/lemonlabsuk/scala-uri) library for representing URLs, so you will need to include it as a dependency in your project.
+
 ## UrlDetector
 
 To use the Scala URL Detector library, you need to import the `UrlDetector` class:
@@ -11,27 +15,39 @@ To use the Scala URL Detector library, you need to import the `UrlDetector` clas
 import io.lambdaworks.detection.UrlDetector
 ```
 
-When creating an instance of this class using `new`, you have to provide a `Config` which affects the behavior of the detector:
+An `apply` method is defined inside the companion object for instantiating a `UrlDetector` from a `Config`, which affects the behavior of the URL detector:
 
 ```scala
-final class UrlDetector(config: Config)
+object UrlDetector {
+
+  def apply(config: Config): UrlDetector
+  
+}
 ```
 
-An `apply` method is defined inside the companion object, so you can instantiate this class without using the `new` keyword. There is another `apply` method with no parameters that uses the default configuration.
+If you want to instantiate a `UrlDetector` with the default configuration, you can use `UrlDetector.default`:
+
+```scala
+object UrlDetector {
+
+  lazy val default: UrlDetector = UrlDetector(Config.default)
+
+}
+```
 
 ## Config
 
-`Config` is a case class in which you can specify `options` in the form of `UrlDetectorOptions`, as well a set of `allowed` and `denied` URLs of type `Set[Url]`:
+`Config` is a case class in which you can specify `options` in the form of `UrlDetectorOptions`, as well a set of `allowed` and `denied` hosts of type `Set[Host]`:
 
 ```scala
 final case class Config(
   options: UrlDetectorOptions,
-  allowed: Set[Url],
-  denied: Set[Url]
+  allowed: Set[Host],
+  denied: Set[Host]
 )
 ```
 
-`allowed` represents URLs which the detector is supposed to detect, while `denied` specifies URLs which the detector should ignore.
+`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a subdomain, as they are ignored inside the detector.
 You can get the default `Config` using `Config.default`:
 
 ```scala
@@ -47,9 +63,9 @@ You can create a new `Config` from an existing one using the following `Config` 
 ```scala
 def withOptions(options: UrlDetectorOptions): Config
 
-def withAllowed(urls: Set[Url]): Config
+def withAllowed(urls: Set[Host]): Config
 
-def withDenied(urls: Set[Url]): Config 
+def withDenied(urls: Set[Host]): Config 
 ```
 
 ## UrlDetectorOptions
@@ -58,22 +74,10 @@ def withDenied(urls: Set[Url]): Config
 
 ## Extracting
 
-In order to extract URLs from a `String` using an instance of `UrlDetector`, you need to call the `extract` method with that `String`, which will return `Set[Url]`:
+In order to extract URLs from a `String` using an instance of `UrlDetector`, you need to call the `extract` method with that `String`, which will return `Set[AbsoluteUrl]`:
 
 ```scala
-def extract(content: String): Set[Url]
+def extract(content: String): Set[AbsoluteUrl]
 ```
 
-`Url` is a value class which has the following methods:
-
-```scala
-def host: String
-
-def containedIn(urls: Set[Url]): Boolean
-```
-
-You can get the `String` representation of the URL with the `toString` method, and there is also an `apply` method defined in the companion object for constructing a `Url` from a `String`:
-
-```scala
-def apply(url: String): Url
-```
+If a URL inside the specified `content` doesn't have a scheme specified, it will be returned with a http scheme.

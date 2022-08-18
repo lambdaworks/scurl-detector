@@ -1,5 +1,6 @@
 package io.lambdaworks.detection
 
+import io.lemonlabs.uri.{Host, Url}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -13,50 +14,50 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Hey, this is our website - check it outhttps://lambdaworks.io/hello",
-          Set(Url("https://lambdaworks.io/hello"))
+          Set(Url.parse("https://lambdaworks.io/hello"))
         ),
         (
           "Hey, this is our website - check it outftp://lambdaworks.io./",
-          Set(Url("ftp://lambdaworks.io/"))
+          Set(Url.parse("ftp://lambdaworks.io"))
         ),
         (
           "Hey, this is our website - check it outhttp://lambdaworks.io./",
-          Set(Url("http://lambdaworks.io/"))
+          Set(Url.parse("http://lambdaworks.io"))
         ),
         (
           "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, lw.com/hello,,,, lw.io/something, https://youtube.com/.",
           Set(
-            Url("wwww.google.com"),
-            Url("google.com"),
-            Url("slack.test.io"),
-            Url("lw.com/hello"),
-            Url("lw.io/something"),
-            Url("https://youtube.com/")
+            Url.parse("http://wwww.google.com"),
+            Url.parse("http://google.com"),
+            Url.parse("http://slack.test.io"),
+            Url.parse("http://lw.com/hello"),
+            Url.parse("http://lw.io/something"),
+            Url.parse("https://youtube.com")
           )
         ),
         (
           "Parse http://test.link/g3WMrh and http://test.link/HWRqhq and test.link/aaa 6.30pm as url",
           Set(
-            Url("http://test.link/g3WMrh"),
-            Url("http://test.link/HWRqhq"),
-            Url("test.link/aaa")
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/aaa")
           )
         ),
         (
           "192.168.1.3 255.255.1.34 1234.34.34.5 0.0.0.0 192.168.1.257 2.3.4.5",
           Set(
-            Url("192.168.1.3"),
-            Url("255.255.1.34"),
-            Url("0.0.0.0"),
-            Url("2.3.4.5")
+            Url.parse("http://192.168.1.3"),
+            Url.parse("http://255.255.1.34"),
+            Url.parse("http://0.0.0.0"),
+            Url.parse("http://2.3.4.5")
           )
         ),
         (
           "Parse http://test.link/g3WMrh and http://test.link/HWRqhq and test.link/aaa",
           Set(
-            Url("http://test.link/g3WMrh"),
-            Url("http://test.link/HWRqhq"),
-            Url("test.link/aaa")
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/aaa")
           )
         ),
         (
@@ -65,7 +66,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ),
         (
           "http://013.xxx/",
-          Set(Url("http://013.xxx/"))
+          Set(Url.parse("http://013.xxx"))
         ),
         (
           "name.lastname@gmail.com",
@@ -73,15 +74,19 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ),
         (
           "Parse\\u00A0http://test.link/g3WMrh and\\u00A0http://test.link/HWRqhq and test.link/lw",
-          Set(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("http://test.link/lw"))
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/lw")
+          )
         ),
         (
           "http://user:pass@host.com host.com",
-          Set(Url("http://user:pass@host.com"), Url("http://host.com"))
+          Set(Url.parse("http://user:pass@host.com"), Url.parse("http://host.com"))
         ),
         (
           "21.10am 21:10pm 12345.com/abc 12345.com/123 21.10am/dmg http://21.10am 9.49am 50.50am 192.168.1.3",
-          Set(Url("12345.com/abc"), Url("12345.com/123"), Url("192.168.1.3"))
+          Set(Url.parse("http://12345.com/abc"), Url.parse("http://12345.com/123"), Url.parse("http://192.168.1.3"))
         ),
         (
           """
@@ -90,7 +95,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
             |Order here - http://store.lw.com....I will be signing some on live soon.Asoon as I get a pen.GO NOW !
             |I hope this.works
             |""".stripMargin,
-          Set(Url("http://store.lw.com/"), Url("http://this.works/"))
+          Set(Url.parse("http://store.lw.com"), Url.parse("http://this.works"))
         ),
         (
           """
@@ -99,21 +104,25 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
             |world.MINI friend.muTUal lw.offIce for.example
             |""".stripMargin,
           Set(
-            Url("http://emacsrocks.com/"),
-            Url("http://emacs.rocks/"),
-            Url("http://valid.me/"),
-            Url("http://world.MINI/"),
-            Url("http://friend.muTUal/"),
-            Url("http://lw.offIce/")
+            Url.parse("http://emacsrocks.com"),
+            Url.parse("http://emacs.rocks"),
+            Url.parse("http://valid.me"),
+            Url.parse("http://world.MINI"),
+            Url.parse("http://friend.muTUal"),
+            Url.parse("http://lw.offIce")
           )
         ),
         (
           "Parse http://www.valid.link. Also, parse this - http://link.me/DM.....",
-          Set(Url("http://www.valid.link"), Url("http://link.me/DM"))
+          Set(Url.parse("http://www.valid.link"), Url.parse("http://link.me/DM"))
         ),
         (
           "Hey here's linkhttp://www.google.com arrayhttps://www.google.com https://www.google.com",
-          Set(Url("http://www.google.com/"), Url("https://www.google.com/"), Url("https://www.google.com/"))
+          Set(
+            Url.parse("http://www.google.com"),
+            Url.parse("https://www.google.com"),
+            Url.parse("https://www.google.com")
+          )
         ),
         (
           "taro@storm.audio janedoe@yahoo.com jdoe@gmail.com",
@@ -121,11 +130,15 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ),
         (
           "Parse\u00A0http://test.link/g3WMrh and\u00A0http://test.link/HWRqhq and test.link/GaGi",
-          Set(Url("http://test.link/g3WMrh"), Url("http://test.link/HWRqhq"), Url("test.link/GaGi"))
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/GaGi")
+          )
         )
       )
 
-    val detector = UrlDetector()
+    val detector = UrlDetector.default
 
     forAll(textExpectedUrls) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -140,19 +153,19 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Hey, this is our website - check it outhttps://lambdaworks.io/",
-          Set(Url("https://lambdaworks.io/"))
+          Set(Url.parse("https://lambdaworks.io"))
         ),
         (
           "Hey, this is our website - check it outftp://lambdaworks.io./",
-          Set(Url("ftp://lambdaworks.io/"))
+          Set(Url.parse("ftp://lambdaworks.io"))
         ),
         (
           "Hey, this is our website - check it outhttp://lambdaworks.io./",
-          Set(Url("http://lambdaworks.io/"))
+          Set(Url.parse("http://lambdaworks.io"))
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.Default, Set(Url("http://lambdaworks.io/")), Set.empty))
+    val detector = UrlDetector(Config(UrlDetectorOptions.Default, Set(Host.parse("lambdaworks.io")), Set.empty))
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -167,19 +180,19 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Hey, this is our website - check it outhttps://lambdaworks.io/",
-          Set(Url("https://lambdaworks.io/"))
+          Set(Url.parse("https://lambdaworks.io"))
         ),
         (
           "Hey, this is our website - check it outftp://lambdaworks.io./",
-          Set(Url("ftp://lambdaworks.io/"))
+          Set(Url.parse("ftp://lambdaworks.io"))
         ),
         (
           "Hey, this is our website - check it outhttp://lambdaworks.io./",
-          Set(Url("http://lambdaworks.io/"))
+          Set(Url.parse("http://lambdaworks.io"))
         )
       )
 
-    val detector = UrlDetector(Config.default.withAllowed(Set(Url("http://lambdaworks.io/"))))
+    val detector = UrlDetector(Config.default.withAllowed(Set(Host.parse("lambdaworks.io"))))
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(
@@ -208,7 +221,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.Default, Set.empty, Set(Url("http://lambdaworks.io"))))
+    val detector = UrlDetector(Config(UrlDetectorOptions.Default, Set.empty, Set(Host.parse("lambdaworks.io"))))
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -235,7 +248,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(Config.default.withDenied(Set(Url("http://lambdaworks.io"))))
+    val detector = UrlDetector(Config.default.withDenied(Set(Host.parse("lambdaworks.io"))))
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(
@@ -256,11 +269,11 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ),
         (
           "Hey, this is our website - check it out \"https://lambdaworks.io/\"",
-          Set(Url("https://lambdaworks.io/"))
+          Set(Url.parse("https://lambdaworks.io"))
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.QuoteMatch, Set.empty, Set(Url("https://google.com/"))))
+    val detector = UrlDetector(Config(UrlDetectorOptions.QuoteMatch, Set.empty, Set(Host.parse("google.com"))))
 
     forAll(testQuoteMatch) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -275,7 +288,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "'https://google.com/'",
-          Set(Url("https://google.com/"))
+          Set(Url.parse("https://google.com"))
         )
       )
 
@@ -294,7 +307,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "'https://google.com/'",
-          Set(Url("https://google.com/"))
+          Set(Url.parse("https://google.com"))
         )
       )
 
@@ -313,19 +326,19 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "(https://google.com/",
-          Set(Url("https://google.com/"))
+          Set(Url.parse("https://google.com"))
         ),
         (
           "[https://google.com/",
-          Set(Url("https://google.com/"))
+          Set(Url.parse("https://google.com"))
         ),
         (
           "Visit {https://google.com/}",
-          Set(Url("https://google.com/"))
+          Set(Url.parse("https://google.com"))
         ),
         (
           "Parse (((http://www.valid.link)(. Also, parse this - ())http://link.me/DM.))(.....",
-          Set(Url("http://www.valid.link/"), Url("http://link.me/DM"))
+          Set(Url.parse("http://www.valid.link"), Url.parse("http://link.me/DM"))
         )
       )
 
@@ -344,7 +357,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "{\"site\": \"google.com\"}",
-          Set(Url("http://google.com/"))
+          Set(Url.parse("http://google.com"))
         ),
         (
           "{\"site\": \"lambdaworks.io\"}",
@@ -352,7 +365,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.Json, Set(Url("google.com")), Set.empty))
+    val detector = UrlDetector(Config(UrlDetectorOptions.Json, Set(Host.parse("google.com")), Set.empty))
 
     forAll(testJson) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -367,7 +380,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "var myUrl = \"http://example.com/index.html?param=1&anotherParam=2\"",
-          Set(Url("http://example.com/index.html?param=1&anotherParam=2"))
+          Set(Url.parse("http://example.com/index.html?param=1&anotherParam=2"))
         )
       )
 
@@ -386,7 +399,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "<img src=\"https://www.google.com/pic\"  width=\"500\" height=\"600\">",
-          Set(Url("https://www.google.com/pic"))
+          Set(Url.parse("https://www.google.com/pic"))
         ),
         (
           "<img src=\"https://lambdaworks.io/pic\"  width=\"500\" height=\"600\">",
@@ -394,7 +407,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.Html, Set(Url("www.google.com")), Set.empty))
+    val detector = UrlDetector(Config(UrlDetectorOptions.Html, Set(Host.parse("www.google.com")), Set.empty))
 
     forAll(testHtml) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -409,7 +422,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">",
-          Set(Url("http://www.w3.org/1999/XSL/Transform"))
+          Set(Url.parse("http://www.w3.org/1999/XSL/Transform"))
         ),
         (
           "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.google.com\">",
@@ -417,7 +430,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(Config(UrlDetectorOptions.Xml, Set.empty, Set(Url("google.com"))))
+    val detector = UrlDetector(Config(UrlDetectorOptions.Xml, Set.empty, Set(Host.parse("google.com"))))
 
     forAll(testXml) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -432,11 +445,11 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Please visit http://localhost",
-          Set(Url("http://localhost/"))
+          Set(Url.parse("http://localhost"))
         ),
         (
           "Please visit go/",
-          Set(Url("http://go/"))
+          Set(Url.parse("http://go"))
         )
       )
 
