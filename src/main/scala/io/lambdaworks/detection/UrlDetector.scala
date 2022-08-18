@@ -62,8 +62,8 @@ final class UrlDetector private (
       .toList
       .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
       .filter(url =>
-        (allowed.isEmpty || hostToApexDomainHost(url.host).exists(allowed.contains))
-          && !hostToApexDomainHost(url.host).exists(denied.contains)
+        (allowed.isEmpty || removeWwwSubdomain(url.host).exists(allowed.contains))
+          && !removeWwwSubdomain(url.host).exists(denied.contains)
           && (options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
           && !isEmail(url)
       )
@@ -87,8 +87,8 @@ object UrlDetector {
 
   def apply(options: UrlDetectorOptions, allowed: Set[Host], denied: Set[Host]): UrlDetector = new UrlDetector(
     options,
-    allowed.flatMap(hostToApexDomainHost),
-    denied.flatMap(hostToApexDomainHost),
+    allowed.flatMap(removeWwwSubdomain),
+    denied.flatMap(removeWwwSubdomain),
     EmailValidator.getInstance()
   )
 
@@ -96,9 +96,10 @@ object UrlDetector {
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
 
-  private def hostToApexDomainHost(host: Host): Option[Host] = host match {
-    case host: DomainName => host.apexDomain.map(Host.parse)
-    case host             => Option(host)
+  private def removeWwwSubdomain(host: Host): Option[Host] = if (host.subdomain.contains("www")) {
+    host.apexDomain.map(Host.parse)
+  } else {
+    Option(host)
   }
 
 }

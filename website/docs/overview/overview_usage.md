@@ -25,7 +25,7 @@ object UrlDetector {
 }
 ```
 
-`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a subdomain, as they are ignored inside the detector.
+`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a www subdomain, as it is assumed.
 
 If you want to instantiate a `UrlDetector` with the default configuration, you can use `UrlDetector.default`:
 
