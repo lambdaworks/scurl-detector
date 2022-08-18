@@ -1,7 +1,7 @@
 package io.lambdaworks.detection
 
-import io.lemonlabs.uri._
 import com.linkedin.urls.detection.{UrlDetector => LUrlDetector, UrlDetectorOptions => LUrlDetectorOptions}
+import io.lemonlabs.uri._
 import org.apache.commons.validator.routines.EmailValidator
 
 import scala.jdk.CollectionConverters._
