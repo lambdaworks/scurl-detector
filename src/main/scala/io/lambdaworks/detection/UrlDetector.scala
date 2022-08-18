@@ -64,7 +64,7 @@ final class UrlDetector private (
       .filter(url =>
         (allowed.isEmpty || removeWwwSubdomain(url.host).exists(allowed.contains))
           && !removeWwwSubdomain(url.host).exists(denied.contains)
-          && (options == UrlDetectorOptions.AllowSingleLevelDomain || checkIfValidDomain(url))
+          && (options == UrlDetectorOptions.AllowSingleLevelDomain || isValidSuffix(url) || isIp(url))
           && !isEmail(url)
       )
       .toSet
@@ -72,11 +72,12 @@ final class UrlDetector private (
 
   private def sanitize(url: String): String = SanitizeRegex.replaceFirstIn(url, "")
 
-  private def checkIfValidDomain(url: AbsoluteUrl): Boolean =
-    url.host.normalize.publicSuffix.isDefined || url.hostOption.exists {
-      case _ @(_: IpV4 | _: IpV6) => true
-      case _                      => false
-    }
+  private def isValidSuffix(url: AbsoluteUrl): Boolean = url.host.normalize.publicSuffix.isDefined
+
+  private def isIp(url: AbsoluteUrl): Boolean = url.host match {
+    case _ @(_: IpV4 | _: IpV6) => true
+    case _                      => false
+  }
 
   private def isEmail(url: AbsoluteUrl): Boolean =
     emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
