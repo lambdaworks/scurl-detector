@@ -21,7 +21,7 @@ jobs:
           distribution: temurin
           java-version: 17
           check-latest: true
-      - name: Cache scala dependencies
+      - name: Cache Scala dependencies
         uses: coursier/cache-action@v6
       - name: Check code formatting
         run: sbt check
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scala: ['2.12.15', '2.13.8']
+        scala: ['2.12.16', '2.13.8']
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v3.0.2
