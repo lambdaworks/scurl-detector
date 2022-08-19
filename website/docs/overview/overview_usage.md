@@ -20,19 +20,19 @@ An `apply` method is defined inside the companion object for instantiating a `Ur
 ```scala
 object UrlDetector {
 
-  def apply(options: UrlDetectorOptions, allowed: Set[Host], denied: Set[Host]): UrlDetector
+  def apply(options: UrlDetectorOptions, allowedOption: Option[Set[Host]], deniedOption: Option[Set[Host]]): UrlDetector
   
 }
 ```
 
-`allowed` represents the hosts of URLs which the detector is supposed to detect, while `denied` specifies the hosts of URLs which the detector should ignore. You don't have to specify a www subdomain, as it is assumed.
+`allowed` represents an optional set of hosts of URLs which the detector is supposed to detect, while `denied` specifies an optional set of hosts of URLs which the detector should ignore. You don't have to specify a www subdomain, as it is assumed.
 
 If you want to instantiate a `UrlDetector` with the default configuration, you can use `UrlDetector.default`:
 
 ```scala
 object UrlDetector {
 
-  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, Set.empty, Set.empty)
+  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, None, None)
 
 }
 ````
