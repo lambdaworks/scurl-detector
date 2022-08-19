@@ -1,11 +1,13 @@
 name: Release
+
 on:
   push:
     branches: [main]
     tags: ["*"]
+
 jobs:
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v3.0.2
@@ -17,7 +19,7 @@ jobs:
           distribution: temurin
           java-version: 17
           check-latest: true
-      - name: Cache scala dependencies
+      - name: Cache Scala dependencies
         uses: coursier/cache-action@v6
       - name: Release artifacts
         run: sbt ci-release
