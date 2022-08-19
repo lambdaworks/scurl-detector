@@ -4,12 +4,11 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(
   List(
-    name                 := "scurl-detector",
-    description          := "Scala library that detects and extracts URLs from text.",
     organization         := "io.lambdaworks",
     organizationName     := "LambdaWorks",
     organizationHomepage := Some(url("https://www.lambdaworks.io/")),
     homepage             := Some(url("https://lambdaworks.github.io/scurl-detector/")),
+    description          := "Scala library that detects and extracts URLs from text.",
     licenses             := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
     developers := List(
       Developer(
@@ -44,6 +43,7 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 
 lazy val root = (project in file("."))
   .settings(
+    name               := "scurl-detector",
     scalaVersion       := "2.13.8",
     crossScalaVersions := Seq("2.12.16", "2.13.8"),
     libraryDependencies ++= All,
