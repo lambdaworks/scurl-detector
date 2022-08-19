@@ -45,7 +45,7 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 lazy val root = (project in file("."))
   .settings(
     scalaVersion       := "2.13.8",
-    crossScalaVersions := Seq("2.12.15", "2.13.8"),
+    crossScalaVersions := Seq("2.12.16", "2.13.8"),
     libraryDependencies ++= All,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
