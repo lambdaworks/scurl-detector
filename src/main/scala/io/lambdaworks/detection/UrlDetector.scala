@@ -28,7 +28,7 @@ final class UrlDetector private (
   private val deniedWithoutWwwOption: Option[Set[Host]] = deniedOption.map(_.flatMap(removeWwwSubdomain))
 
   private def removeWwwSubdomain(host: Host): Option[Host] = if (host.subdomain.contains("www")) {
-    host.apexDomain.map(Host.parse)
+    host.apexDomain.flatMap(Host.parseOption)
   } else {
     Option(host)
   }
@@ -48,7 +48,8 @@ final class UrlDetector private (
    * @param allowed set of hosts to allow
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
    */
-  def withAllowed(allowed: Set[Host]): UrlDetector = UrlDetector(options, Option(allowed), deniedOption)
+  def withAllowed(allowed: Set[Host]): UrlDetector =
+    UrlDetector(options, Some(allowed), deniedOption)
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to deny.
@@ -56,7 +57,8 @@ final class UrlDetector private (
    * @param denied set of hosts to deny
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
    */
-  def withDenied(denied: Set[Host]): UrlDetector = UrlDetector(options, allowedOption, Option(denied))
+  def withDenied(denied: Set[Host]): UrlDetector =
+    UrlDetector(options, allowedOption, Some(denied))
 
   /**
    * Method that extracts URLs from text.
@@ -65,10 +67,11 @@ final class UrlDetector private (
    * @return set of found URLs
    */
   def extract(content: String): Set[AbsoluteUrl] = {
-    def sanitize(url: String): String = SanitizeRegex.replaceFirstIn(url, "")
+    def sanitize(url: String): String =
+      SanitizeRegex.replaceFirstIn(url, "")
 
-    def containsHost(hostSet: Set[Host], url: AbsoluteUrl): Boolean =
-      removeWwwSubdomain(url.host).exists(hostSet.contains)
+    def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
+      removeWwwSubdomain(url.host).exists(hosts.contains)
 
     def isAllowedUrl(url: AbsoluteUrl): Boolean =
       allowedWithoutWwwOption.forall(containsHost(_, url)) && deniedWithoutWwwOption.forall(!containsHost(_, url))
@@ -76,7 +79,8 @@ final class UrlDetector private (
     def isNotEmail(url: AbsoluteUrl): Boolean =
       !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
-    def isValidSuffix(url: AbsoluteUrl): Boolean = url.host.normalize.publicSuffix.isDefined
+    def isValidSuffix(url: AbsoluteUrl): Boolean =
+      url.host.normalize.publicSuffix.isDefined
 
     def isIp(url: AbsoluteUrl): Boolean = url.host match {
       case _ @(_: IpV4 | _: IpV6) => true
