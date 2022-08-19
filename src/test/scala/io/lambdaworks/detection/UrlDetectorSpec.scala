@@ -165,7 +165,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Default, Set(Host.parse("lambdaworks.io")), Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.Default, Option(Set(Host.parse("lambdaworks.io"))), None)
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -221,7 +221,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Default, Set.empty, Set(Host.parse("lambdaworks.io")))
+    val detector = UrlDetector(UrlDetectorOptions.Default, None, Option(Set(Host.parse("lambdaworks.io"))))
 
     forAll(textExpectedUrlsAllowedDenied) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -273,7 +273,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.QuoteMatch, Set.empty, Set(Host.parse("google.com")))
+    val detector = UrlDetector(UrlDetectorOptions.QuoteMatch, None, Option(Set(Host.parse("google.com"))))
 
     forAll(testQuoteMatch) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -292,7 +292,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.SingleQuoteMatch, Set.empty, Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.SingleQuoteMatch, None, None)
 
     forAll(testSingleQuoteMatch) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -342,7 +342,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.BracketMatch, Set.empty, Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.BracketMatch, None, None)
 
     forAll(testBracketMatch) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -365,7 +365,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Json, Set(Host.parse("google.com")), Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.Json, Option(Set(Host.parse("google.com"))), None)
 
     forAll(testJson) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -384,7 +384,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Javascript, Set.empty, Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.Javascript, None, None)
 
     forAll(testJavascript) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -407,7 +407,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Html, Set(Host.parse("www.google.com")), Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.Html, Option(Set(Host.parse("www.google.com"))), None)
 
     forAll(testHtml) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -430,7 +430,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.Xml, Set.empty, Set(Host.parse("google.com")))
+    val detector = UrlDetector(UrlDetectorOptions.Xml, None, Option(Set(Host.parse("google.com"))))
 
     forAll(testXml) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
@@ -453,7 +453,7 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         )
       )
 
-    val detector = UrlDetector(UrlDetectorOptions.AllowSingleLevelDomain, Set.empty, Set.empty)
+    val detector = UrlDetector(UrlDetectorOptions.AllowSingleLevelDomain, None, None)
 
     forAll(testAllowSingleLevelDomain) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
