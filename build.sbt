@@ -9,21 +9,7 @@ inThisBuild(
     organizationHomepage := Some(url("https://www.lambdaworks.io/")),
     homepage             := Some(url("https://lambdaworks.github.io/scurl-detector/")),
     description          := "Scala library that detects and extracts URLs from text.",
-    licenses             := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
-    developers := List(
-      Developer(
-        "mvelimir",
-        "Velimir Milinković",
-        "velimir@lambdaworks.io",
-        url("https://github.com/mvelimir")
-      ),
-      Developer(
-        "drmarjanovic",
-        "Dragutin Marjanović",
-        "dragutin@lambdaworks.io",
-        url("https://github.com/drmarjanovic")
-      )
-    )
+    licenses             := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
   )
 )
 
