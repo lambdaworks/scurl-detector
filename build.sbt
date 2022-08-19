@@ -30,7 +30,7 @@ inThisBuild(
 
 // Sonatype publish options
 sonatypeCredentialHost := "s01.oss.sonatype.org"
-sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
+sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
 
 addCommandAlias("prepare", "fix; fmt")
 addCommandAlias("check", "fixCheck; fmtCheck")
