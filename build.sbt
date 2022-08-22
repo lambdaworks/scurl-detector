@@ -29,9 +29,9 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 
 lazy val root = (project in file("."))
   .settings(
-    name               := "scurl-detector",
-    scalaVersion       := "2.13.8",
-    crossScalaVersions := Seq("2.12.16", "2.13.8"),
+    name                     := "scurl-detector",
+    ThisBuild / scalaVersion := "2.13.8",
+    crossScalaVersions       := Seq("2.12.16", "2.13.8"),
     libraryDependencies ++= All,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
@@ -42,3 +42,12 @@ lazy val root = (project in file("."))
       }
     }
   )
+
+lazy val docs = (project in file("scurl-detector-docs"))
+  .settings(
+    moduleName := "scurl-detector-docs",
+    mdocIn     := (LocalRootProject / baseDirectory).value / "docs",
+    mdocOut    := (LocalRootProject / baseDirectory).value / "website" / "docs"
+  )
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
+  .dependsOn(root)
