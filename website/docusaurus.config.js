@@ -87,6 +87,13 @@ const config = {
               `
               }
             ]
+          },
+          {
+            title: `Additional resources`,
+            items: [
+              labeL: `Scaladoc of Scala URL Detector`,
+              href: `/scurl-detector/api/index.html`
+            ]
           }
         ],
         copyright: `Copyright © ${new Date().getFullYear()} LambdaWorks d.o.o.`
