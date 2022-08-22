@@ -9,16 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: ./website
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - name: Checkout current branch
+        uses: actions/checkout@v3.0.2
+      - name: Setup Java
+        uses: actions/setup-java@v3.1.1
         with:
-          node-version: 18
-      - name: Install dependencies and build website
-        run: yarn install --frozen-lockfile && yarn build
+          distribution: temurin
+          java-version: 17
+          check-latest: true
+      - name: Cache Scala dependencies
+        uses: coursier/cache-action@v6
+      - name: Generate website
+        run: sbt docs/docusaurusCreateSite
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
