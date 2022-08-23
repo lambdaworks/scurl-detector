@@ -9,3 +9,4 @@ website/node_modules
 website/.docusaurus
 website/build
 website/package-lock.json
+website/static/api

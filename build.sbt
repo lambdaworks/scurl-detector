@@ -4,6 +4,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(
   List(
+    scalaVersion         := "2.13.8",
     organization         := "io.lambdaworks",
     organizationName     := "LambdaWorks",
     organizationHomepage := Some(url("https://www.lambdaworks.io/")),
@@ -30,7 +31,6 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 lazy val root = (project in file("."))
   .settings(
     name               := "scurl-detector",
-    scalaVersion       := "2.13.8",
     crossScalaVersions := Seq("2.12.16", "2.13.8"),
     libraryDependencies ++= All,
     semanticdbEnabled := true,
@@ -42,3 +42,17 @@ lazy val root = (project in file("."))
       }
     }
   )
+
+lazy val docs = (project in file("scurl-detector-docs"))
+  .settings(
+    moduleName                                 := "scurl-detector-docs",
+    mdocIn                                     := (LocalRootProject / baseDirectory).value / "docs",
+    mdocOut                                    := (LocalRootProject / baseDirectory).value / "website" / "docs",
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(root),
+    ScalaUnidoc / unidoc / target              := (LocalRootProject / baseDirectory).value / "website" / "static" / "api",
+    cleanFiles += (ScalaUnidoc / unidoc / target).value,
+    docusaurusCreateSite     := docusaurusCreateSite.dependsOn(Compile / unidoc).value,
+    docusaurusPublishGhpages := docusaurusPublishGhpages.dependsOn(Compile / unidoc).value
+  )
+  .enablePlugins(MdocPlugin, DocusaurusPlugin, ScalaUnidocPlugin)
+  .dependsOn(root)

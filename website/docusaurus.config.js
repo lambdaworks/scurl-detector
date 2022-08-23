@@ -14,7 +14,7 @@ const config = {
   projectName: 'scurl-detector',
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en']
   },
   presets: [
     [
@@ -85,6 +85,15 @@ const config = {
                   <img src="https://img.shields.io/github/stars/lambdaworks/scurl-detector?style=social" alt="github" />
                 </a>
               `
+              }
+            ]
+          },
+          {
+            title: `Additional resources`,
+            items: [
+              {
+                label: `Scaladoc of Scala URL Detector`,
+                href: `/scurl-detector/api/index.html`
               }
             ]
           }
