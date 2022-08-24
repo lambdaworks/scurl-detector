@@ -93,11 +93,11 @@ const config = {
             ]
           },
           {
-            title: `Additional resources`,
+            title: 'Additional resources',
             items: [
               {
-                label: `Scaladoc of Scala URL Detector`,
-                href: `/scurl-detector/api/index.html`
+                label: 'Scaladoc of Scala URL Detector',
+                to: 'pathname:///scurl-detector/api/io/lambdaworks/detection/'
               }
             ]
           }
