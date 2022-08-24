@@ -46,8 +46,6 @@ lazy val root = (project in file("."))
 lazy val docs = (project in file("scurl-detector-docs"))
   .settings(
     moduleName                                 := "scurl-detector-docs",
-    mdocIn                                     := (LocalRootProject / baseDirectory).value / "docs",
-    mdocOut                                    := (LocalRootProject / baseDirectory).value / "website" / "docs",
     ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(root),
     ScalaUnidoc / unidoc / target              := (LocalRootProject / baseDirectory).value / "website" / "static" / "api",
     cleanFiles += (ScalaUnidoc / unidoc / target).value,

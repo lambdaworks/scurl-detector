@@ -21,6 +21,7 @@ const config = {
       'classic',
       ({
         docs: {
+          path: '../scurl-detector-docs/target/mdoc',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
