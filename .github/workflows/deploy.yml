@@ -18,12 +18,7 @@ jobs:
           distribution: temurin
           java-version: 17
           check-latest: true
-      - name: Cache Scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Generate website
-        run: sbt docs/docusaurusCreateSite
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./website/build
+        run: sbt docs/docusaurusPublishGhpages
+        env:
+          GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}

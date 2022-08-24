@@ -21,6 +21,7 @@ const config = {
       'classic',
       ({
         docs: {
+          path: '../scurl-detector-docs/target/mdoc',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
@@ -28,7 +29,7 @@ const config = {
         },
         blog: false,
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve('./src/css/custom.css')
         }
       })
     ]
@@ -89,11 +90,11 @@ const config = {
             ]
           },
           {
-            title: `Additional resources`,
+            title: 'Additional resources',
             items: [
               {
-                label: `Scaladoc of Scala URL Detector`,
-                href: `/scurl-detector/api/index.html`
+                label: 'Scaladoc of Scala URL Detector',
+                to: 'pathname:///scurl-detector/api/io/lambdaworks/detection/'
               }
             ]
           }
