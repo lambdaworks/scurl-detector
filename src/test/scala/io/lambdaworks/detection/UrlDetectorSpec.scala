@@ -339,6 +339,30 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         (
           "Parse (((http://www.valid.link)(. Also, parse this - ())http://link.me/DM.))(.....",
           Set(Url.parse("http://www.valid.link"), Url.parse("http://link.me/DM"))
+        ),
+        (
+          "Parse http://test.link/g3WMrh and http://test.link/HWRqhq().pdf and (test.link/KeKy)",
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/KeKy")
+          )
+        ),
+        (
+          "Parse http://test.link/g3WMrh and http://test.link/HWRqhq{}.pdf and {test.link/KeKy}",
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/KeKy")
+          )
+        ),
+        (
+          "Parse http://test.link/g3WMrh and http://test.link/HWRqhq{}.pdf and {test.link/KeKy}",
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/KeKy")
+          )
         )
       )
 
