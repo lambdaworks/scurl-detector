@@ -1,4 +1,3 @@
-
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -25,7 +24,7 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/lambdaworks/scurl-detector/edit/main/website/',
+            ({ docPath }) => `https://github.com/lambdaworks/scurl-detector/edit/main/docs/${docPath}`
         },
         blog: false,
         theme: {
