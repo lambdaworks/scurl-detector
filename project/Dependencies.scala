@@ -9,7 +9,7 @@ object Dependencies {
     val CommonsValidator      = "1.7"
     val ScalaCollectionCompat = "2.8.1"
     val ScalaUri              = "4.0.2"
-    val OrganizeImports       = "0.5.0"
+    val OrganizeImports       = "0.6.0"
     val Scaluzzi              = "0.1.23"
 
   }
