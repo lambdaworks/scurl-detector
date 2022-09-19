@@ -45,7 +45,7 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 lazy val root = (project in file("."))
   .settings(
     name               := "scurl-detector",
-    crossScalaVersions := List("2.12.16", "2.13.8"),
+    crossScalaVersions := List("2.12.17", "2.13.8"),
     libraryDependencies ++= All,
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
