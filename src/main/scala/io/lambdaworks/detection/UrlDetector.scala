@@ -73,13 +73,13 @@ final class UrlDetector private (
     def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
       removeWwwSubdomain(url.host).exists(hosts.contains)
 
-    def isAllowedUrl(url: AbsoluteUrl): Boolean =
+    def allowedUrl(url: AbsoluteUrl): Boolean =
       allowedWithoutWwwOption.forall(containsHost(_, url)) && deniedWithoutWwwOption.forall(!containsHost(_, url))
 
-    def isNotEmail(url: AbsoluteUrl): Boolean =
+    def notEmail(url: AbsoluteUrl): Boolean =
       !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
-    def isValidSuffix(url: AbsoluteUrl): Boolean =
+    def validSuffix(url: AbsoluteUrl): Boolean =
       url.host.normalize.publicSuffix.isDefined
 
     def isIp(url: AbsoluteUrl): Boolean = url.host match {
@@ -87,8 +87,8 @@ final class UrlDetector private (
       case _                      => false
     }
 
-    def isValidTopLevelDomain(url: AbsoluteUrl): Boolean =
-      options == UrlDetectorOptions.AllowSingleLevelDomain || isValidSuffix(url: AbsoluteUrl) || isIp(url)
+    def validTopLevelDomain(url: AbsoluteUrl): Boolean =
+      options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
     val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
@@ -97,7 +97,7 @@ final class UrlDetector private (
       .asScala
       .toList
       .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
-      .filter(url => isAllowedUrl(url) && isNotEmail(url) && isValidTopLevelDomain(url))
+      .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
 
