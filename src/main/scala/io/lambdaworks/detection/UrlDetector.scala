@@ -33,6 +33,29 @@ final class UrlDetector private (
     Option(host)
   }
 
+  private def sanitize(url: String): String =
+    SanitizeRegex.replaceFirstIn(url, "")
+
+  private def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
+    removeWwwSubdomain(url.host).exists(hosts.contains)
+
+  private def allowedUrl(url: AbsoluteUrl): Boolean =
+    allowedWithoutWwwOption.forall(containsHost(_, url)) && deniedWithoutWwwOption.forall(!containsHost(_, url))
+
+  private def notEmail(url: AbsoluteUrl): Boolean =
+    !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
+
+  private def validSuffix(url: AbsoluteUrl): Boolean =
+    url.host.normalize.publicSuffix.isDefined
+
+  private def isIp(url: AbsoluteUrl): Boolean = url.host match {
+    case _ @(_: IpV4 | _: IpV6) => true
+    case _                      => false
+  }
+
+  private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
+    options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
+
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with URL detector options.
    *
@@ -67,29 +90,6 @@ final class UrlDetector private (
    * @return set of found URLs
    */
   def extract(content: String): Set[AbsoluteUrl] = {
-    def sanitize(url: String): String =
-      SanitizeRegex.replaceFirstIn(url, "")
-
-    def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
-      removeWwwSubdomain(url.host).exists(hosts.contains)
-
-    def allowedUrl(url: AbsoluteUrl): Boolean =
-      allowedWithoutWwwOption.forall(containsHost(_, url)) && deniedWithoutWwwOption.forall(!containsHost(_, url))
-
-    def notEmail(url: AbsoluteUrl): Boolean =
-      !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
-
-    def validSuffix(url: AbsoluteUrl): Boolean =
-      url.host.normalize.publicSuffix.isDefined
-
-    def isIp(url: AbsoluteUrl): Boolean = url.host match {
-      case _ @(_: IpV4 | _: IpV6) => true
-      case _                      => false
-    }
-
-    def validTopLevelDomain(url: AbsoluteUrl): Boolean =
-      options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
-
     val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
     detector
