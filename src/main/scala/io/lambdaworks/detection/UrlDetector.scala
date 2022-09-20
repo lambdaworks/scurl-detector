@@ -90,7 +90,7 @@ final class UrlDetector private (
     def isValidTopLevelDomain(url: AbsoluteUrl): Boolean =
       options == UrlDetectorOptions.AllowSingleLevelDomain || isValidSuffix(url: AbsoluteUrl) || isIp(url)
 
-    val detector: LUrlDetector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+    val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
     detector
       .detect()
