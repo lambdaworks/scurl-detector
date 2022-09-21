@@ -28,7 +28,7 @@ final class UrlDetector private (
 ) {
 
   private val allowedWithoutWwwOption: Option[Set[Host]] =
-    allowedOption.map(_.toSortedSet.flatMap(removeWwwSubdomain)(orderHost.toOrdering))
+    allowedOption.map(_.toSortedSet.flatMap(removeWwwSubdomain))
 
   private val deniedWithoutWww: Set[Host] = denied.flatMap(removeWwwSubdomain)
 
@@ -90,7 +90,7 @@ final class UrlDetector private (
   def withAllowed(host: Host, hosts: Host*): UrlDetector =
     new UrlDetector(
       options,
-      Option(NonEmptySet[Host](host, SortedSet.from(hosts)(orderHost.toOrdering))),
+      Option(NonEmptySet[Host](host, SortedSet(hosts: _*))),
       denied,
       emailValidator
     )
@@ -147,5 +147,7 @@ object UrlDetector {
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
+
+  implicit val orderingHost: Ordering[Host] = orderHost.toOrdering
 
 }
