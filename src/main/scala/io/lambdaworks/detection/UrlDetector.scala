@@ -27,17 +27,18 @@ final class UrlDetector private (
 
   private val deniedWithoutWwwOption: Option[Set[Host]] = deniedOption.map(_.flatMap(removeWwwSubdomain))
 
-  private def removeWwwSubdomain(host: Host): Option[Host] = if (host.subdomain.contains("www")) {
-    host.apexDomain.flatMap(Host.parseOption)
-  } else {
-    Option(host)
-  }
+  private def removeWwwSubdomain(host: Host): Option[Host] =
+    if (host.subdomain.contains("www")) {
+      host.apexDomain.flatMap(Host.parseOption)
+    } else {
+      Option(host)
+    }
 
   private def sanitize(url: String): String =
     SanitizeRegex.replaceFirstIn(url, "")
 
   private def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
-    removeWwwSubdomain(url.host).exists(hosts.contains)
+    hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
 
   private def allowedUrl(url: AbsoluteUrl): Boolean =
     allowedWithoutWwwOption.forall(containsHost(_, url)) && deniedWithoutWwwOption.forall(!containsHost(_, url))
