@@ -15,15 +15,14 @@ import UrlDetector._
 
 final class UrlDetector private (
   options: UrlDetectorOptions,
-  allowedOption: Option[NonEmptySet[Host]],
-  denied: Set[Host],
+  allowed: Option[NonEmptySet[Host]],
+  denied: Option[NonEmptySet[Host]],
   emailValidator: EmailValidator
 ) {
 
-  private val allowedWithoutWwwOption: Option[Set[Host]] =
-    allowedOption.map(_.toSortedSet.flatMap(removeWwwSubdomain))
+  private val allowedWithoutWww: Option[Set[Host]] = allowed.map(_.toSortedSet.flatMap(removeWwwSubdomain))
 
-  private val deniedWithoutWww: Set[Host] = denied.flatMap(removeWwwSubdomain)
+  private val deniedWithoutWww: Option[Set[Host]] = denied.map(_.toSortedSet.flatMap(removeWwwSubdomain))
 
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
@@ -39,7 +38,7 @@ final class UrlDetector private (
     hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
 
   private def allowedUrl(url: AbsoluteUrl): Boolean =
-    allowedWithoutWwwOption.forall(containsHost(_, url)) && !containsHost(deniedWithoutWww, url)
+    allowedWithoutWww.forall(containsHost(_, url)) && deniedWithoutWww.forall(!containsHost(_, url))
 
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
@@ -62,7 +61,7 @@ final class UrlDetector private (
    * @return new [[io.lambdaworks.detection.UrlDetector]] with applied options
    */
   def withOptions(options: UrlDetectorOptions): UrlDetector =
-    new UrlDetector(options, allowedOption, denied, emailValidator)
+    new UrlDetector(options, allowed, denied, emailValidator)
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
@@ -71,7 +70,7 @@ final class UrlDetector private (
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
    */
   def withAllowed(allowed: NonEmptySet[Host]): UrlDetector =
-    new UrlDetector(options, Option(allowed), denied, emailValidator)
+    new UrlDetector(options, Some(allowed), denied, emailValidator)
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
@@ -95,7 +94,7 @@ final class UrlDetector private (
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
    */
   def withDenied(denied: NonEmptySet[Host]): UrlDetector =
-    new UrlDetector(options, allowedOption, denied.toSortedSet, emailValidator)
+    new UrlDetector(options, allowed, Option(denied), emailValidator)
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to deny.
@@ -107,8 +106,8 @@ final class UrlDetector private (
   def withDenied(host: Host, hosts: Host*): UrlDetector =
     new UrlDetector(
       options,
-      allowedOption,
-      Set(host +: hosts: _*),
+      allowed,
+      Option(NonEmptySet(host, SortedSet(hosts: _*))),
       emailValidator
     )
 
@@ -135,7 +134,7 @@ final class UrlDetector private (
 object UrlDetector {
 
   def apply(options: UrlDetectorOptions): UrlDetector =
-    new UrlDetector(options, None, Set.empty[Host], EmailValidator.getInstance())
+    new UrlDetector(options, None, None, EmailValidator.getInstance())
 
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
