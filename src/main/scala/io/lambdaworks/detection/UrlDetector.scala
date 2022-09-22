@@ -26,44 +26,23 @@ final class UrlDetector private (
   private val deniedWithoutWww: Option[NonEmptySet[Host]] =
     denied.flatMap(denied => NonEmptySet.fromSet(denied.toSortedSet.flatMap(removeWwwSubdomain)))
 
-  private def removeWwwSubdomain(host: Host): Option[Host] =
-    if (host.subdomain.contains("www")) {
-      host.apexDomain.flatMap(Host.parseOption)
-    } else {
-      Option(host)
-    }
-
-  private def sanitize(url: String): String =
-    SanitizeRegex.replaceFirstIn(url, "")
-
-  private def containsHost(hosts: NonEmptySet[Host], url: AbsoluteUrl): Boolean =
-    hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
-
-  private def allowedUrl(url: AbsoluteUrl): Boolean =
-    allowedWithoutWww.forall(containsHost(_, url)) && deniedWithoutWww.forall(!containsHost(_, url))
-
-  private def notEmail(url: AbsoluteUrl): Boolean =
-    !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
-
-  private def validSuffix(url: AbsoluteUrl): Boolean =
-    url.host.normalize.publicSuffix.isDefined
-
-  private def isIp(url: AbsoluteUrl): Boolean = url.host match {
-    case _ @(_: IpV4 | _: IpV6) => true
-    case _                      => false
-  }
-
-  private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
-    options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
-
   /**
-   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with URL detector options.
+   * Method that extracts URLs from text.
    *
-   * @param options URL detector options (see [[io.lambdaworks.detection.UrlDetectorOptions]])
-   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied options
+   * @param content text from which URLs are being extracted
+   * @return set of found URLs
    */
-  def withOptions(options: UrlDetectorOptions): UrlDetector =
-    new UrlDetector(options, allowed, denied, emailValidator)
+  def extract(content: String): Set[AbsoluteUrl] = {
+    val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+
+    detector
+      .detect()
+      .asScala
+      .toList
+      .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
+      .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
+      .toSet
+  }
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
@@ -96,22 +75,43 @@ final class UrlDetector private (
     )
 
   /**
-   * Method that extracts URLs from text.
+   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with URL detector options.
    *
-   * @param content text from which URLs are being extracted
-   * @return set of found URLs
+   * @param options URL detector options (see [[io.lambdaworks.detection.UrlDetectorOptions]])
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with applied options
    */
-  def extract(content: String): Set[AbsoluteUrl] = {
-    val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+  def withOptions(options: UrlDetectorOptions): UrlDetector =
+    new UrlDetector(options, allowed, denied, emailValidator)
 
-    detector
-      .detect()
-      .asScala
-      .toList
-      .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
-      .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
-      .toSet
+  private def allowedUrl(url: AbsoluteUrl): Boolean =
+    allowedWithoutWww.forall(containsHost(_, url)) && deniedWithoutWww.forall(!containsHost(_, url))
+
+  private def containsHost(hosts: NonEmptySet[Host], url: AbsoluteUrl): Boolean =
+    hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
+
+  private def isIp(url: AbsoluteUrl): Boolean = url.host match {
+    case _ @(_: IpV4 | _: IpV6) => true
+    case _                      => false
   }
+
+  private def notEmail(url: AbsoluteUrl): Boolean =
+    !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
+
+  private def removeWwwSubdomain(host: Host): Option[Host] =
+    if (host.subdomain.contains("www")) {
+      host.apexDomain.flatMap(Host.parseOption)
+    } else {
+      Option(host)
+    }
+
+  private def sanitize(url: String): String =
+    SanitizeRegex.replaceFirstIn(url, "")
+
+  private def validSuffix(url: AbsoluteUrl): Boolean =
+    url.host.normalize.publicSuffix.isDefined
+
+  private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
+    options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
 }
 

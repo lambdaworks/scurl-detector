@@ -40,11 +40,11 @@ object UrlDetector {
 You can create a new `UrlDetector` from an existing one using the following `UrlDetector` methods:
 
 ```scala
-def withOptions(options: UrlDetectorOptions): UrlDetector
-
 def withAllowed(host: Host, hosts: Host*): UrlDetector
 
-def withDenied(host: Host, hosts: Host*): UrlDetector 
+def withDenied(host: Host, hosts: Host*): UrlDetector
+
+def withOptions(options: UrlDetectorOptions): UrlDetector
 ```
 
 Where with `withAllowed` we specify hosts of URLs which the detector is supposed to detect, while with `withDenied` we specify hosts of URLs which the detector should ignore. You don't have to specify a www subdomain for hosts, as it is assumed. Unless another subdomain is specified, all possible subdomains will be matched.
