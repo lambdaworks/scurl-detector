@@ -13,13 +13,6 @@ import scala.util.matching.Regex
 
 import UrlDetector._
 
-/**
- * Represents URL detector.
- *
- * @param options URL detector configuration
- * @param allowedOption optional nonempty set of allowed hosts
- * @param denied set of denied hosts
- */
 final class UrlDetector private (
   options: UrlDetectorOptions,
   allowedOption: Option[NonEmptySet[Host]],
