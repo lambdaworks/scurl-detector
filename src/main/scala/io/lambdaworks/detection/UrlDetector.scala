@@ -133,9 +133,18 @@ final class UrlDetector private (
 
 object UrlDetector {
 
+  /**
+   * Creates a [[io.lambdaworks.detection.UrlDetector]] with the specified [[io.lambdaworks.detection.UrlDetectorOptions]]
+   *
+   * @param options URL detector options
+   * @return new [[io.lambdaworks.detection.UrlDetector]] with the specified URL detector options
+   */
   def apply(options: UrlDetectorOptions): UrlDetector =
     new UrlDetector(options, None, None, EmailValidator.getInstance())
 
+  /**
+   * A [[io.lambdaworks.detection.UrlDetector]] with the default options
+   */
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
