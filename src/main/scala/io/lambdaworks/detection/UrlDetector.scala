@@ -20,9 +20,11 @@ final class UrlDetector private (
   emailValidator: EmailValidator
 ) {
 
-  private val allowedWithoutWww: Option[Set[Host]] = allowed.map(_.toSortedSet.flatMap(removeWwwSubdomain))
+  private val allowedWithoutWww: Option[NonEmptySet[Host]] =
+    allowed.flatMap(allowed => NonEmptySet.fromSet(allowed.toSortedSet.flatMap(removeWwwSubdomain)))
 
-  private val deniedWithoutWww: Option[Set[Host]] = denied.map(_.toSortedSet.flatMap(removeWwwSubdomain))
+  private val deniedWithoutWww: Option[NonEmptySet[Host]] =
+    denied.flatMap(denied => NonEmptySet.fromSet(denied.toSortedSet.flatMap(removeWwwSubdomain)))
 
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
@@ -34,7 +36,7 @@ final class UrlDetector private (
   private def sanitize(url: String): String =
     SanitizeRegex.replaceFirstIn(url, "")
 
-  private def containsHost(hosts: Set[Host], url: AbsoluteUrl): Boolean =
+  private def containsHost(hosts: NonEmptySet[Host], url: AbsoluteUrl): Boolean =
     hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
 
   private def allowedUrl(url: AbsoluteUrl): Boolean =
