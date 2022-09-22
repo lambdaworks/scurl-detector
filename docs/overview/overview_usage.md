@@ -20,19 +20,19 @@ An `apply` method is defined inside the companion object for instantiating a `Ur
 ```scala
 object UrlDetector {
 
-  def apply(options: UrlDetectorOptions, allowedOption: Option[Set[Host]], deniedOption: Option[Set[Host]]): UrlDetector
+  def apply(options: UrlDetectorOptions): UrlDetector
   
 }
 ```
 
-`allowed` represents an optional set of hosts of URLs which the detector is supposed to detect, while `denied` specifies an optional set of hosts of URLs which the detector should ignore. You don't have to specify a www subdomain, as it is assumed.
+Where `options` specify the configuration of the `UrlDetector`.
 
 If you want to instantiate a `UrlDetector` with the default configuration, you can use `UrlDetector.default`:
 
 ```scala
 object UrlDetector {
 
-  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default, None, None)
+  lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
 }
 ````
@@ -40,12 +40,14 @@ object UrlDetector {
 You can create a new `UrlDetector` from an existing one using the following `UrlDetector` methods:
 
 ```scala
+def withAllowed(host: Host, hosts: Host*): UrlDetector
+
+def withDenied(host: Host, hosts: Host*): UrlDetector
+
 def withOptions(options: UrlDetectorOptions): UrlDetector
-
-def withAllowed(allowed: Set[Host]): UrlDetector
-
-def withDenied(denied: Set[Host]): UrlDetector 
 ```
+
+Where with `withAllowed` we specify hosts of URLs which the detector is supposed to detect, while with `withDenied` we specify hosts of URLs which the detector should ignore. You don't have to specify a www subdomain for hosts, as it is assumed. Unless another subdomain is specified, all possible subdomains will be matched.
 
 ## UrlDetectorOptions
 
