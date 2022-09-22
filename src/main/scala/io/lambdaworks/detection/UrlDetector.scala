@@ -90,7 +90,7 @@ final class UrlDetector private (
   def withAllowed(host: Host, hosts: Host*): UrlDetector =
     new UrlDetector(
       options,
-      Option(NonEmptySet[Host](host, SortedSet(hosts: _*))),
+      Option(NonEmptySet(host, SortedSet(hosts: _*))),
       denied,
       emailValidator
     )
