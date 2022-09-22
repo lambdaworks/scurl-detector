@@ -131,6 +131,6 @@ object UrlDetector {
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
 
-  implicit val orderingHost: Ordering[Host] = orderHost.toOrdering
+  implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
 }
