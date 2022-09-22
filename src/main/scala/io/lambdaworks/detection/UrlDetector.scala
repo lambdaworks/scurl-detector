@@ -66,15 +66,6 @@ final class UrlDetector private (
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
    *
-   * @param allowed set of hosts to allow
-   * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
-   */
-  def withAllowed(allowed: NonEmptySet[Host]): UrlDetector =
-    new UrlDetector(options, Some(allowed), denied, emailValidator)
-
-  /**
-   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
-   *
    * @param host required host to allow
    * @param hosts additional hosts to allow
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
@@ -86,15 +77,6 @@ final class UrlDetector private (
       denied,
       emailValidator
     )
-
-  /**
-   * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to deny.
-   *
-   * @param denied set of hosts to deny
-   * @return new [[io.lambdaworks.detection.UrlDetector]] with the applied set of hosts
-   */
-  def withDenied(denied: NonEmptySet[Host]): UrlDetector =
-    new UrlDetector(options, allowed, Option(denied), emailValidator)
 
   /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to deny.
