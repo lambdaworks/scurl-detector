@@ -47,6 +47,8 @@ lazy val root = (project in file("."))
     name               := "scurl-detector",
     crossScalaVersions := List("2.12.17", "2.13.8"),
     libraryDependencies ++= All,
+    buildInfoKeys     := Seq[BuildInfoKey](organization, name, version),
+    buildInfoPackage  := "detection",
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
     scalacOptions += {
@@ -56,6 +58,7 @@ lazy val root = (project in file("."))
       }
     }
   )
+  .enablePlugins(BuildInfoPlugin)
 
 lazy val docs = (project in file("scurl-detector-docs"))
   .settings(
