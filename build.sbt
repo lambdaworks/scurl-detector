@@ -13,16 +13,10 @@ inThisBuild(
     licenses             := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
     developers := List(
       Developer(
-        "mvelimir",
-        "Velimir Milinković",
-        "velimir@lambdaworks.io",
-        url("https://github.com/mvelimir")
-      ),
-      Developer(
-        "drmarjanovic",
-        "Dragutin Marjanović",
-        "dragutin@lambdaworks.io",
-        url("https://github.com/drmarjanovic")
+        "lambdaworks",
+        "LambdaWorks' Team",
+        "admin@lambdaworks.io",
+        url("https://github.com/lambdaworks")
       )
     )
   )
