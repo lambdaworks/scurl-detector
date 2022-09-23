@@ -7,9 +7,10 @@ Scala URL Detector is a Scala library that detects and extracts URLs from text. 
 
 ## Installation
 
-To use the latest snapshot of Scala URL Detector in your project add the following to your build.sbt file:
+To use the latest release of Scala URL Detector in your project add the following to your `build.sbt` file:
 
-```scala
-resolvers ++= Resolver.sonatypeOssRepos("snapshots")
-libraryDependencies += "io.lambdaworks" %% "scurl-detector" % "@SNAPSHOT_VERSION@"
+```scala mdoc:passthrough
+println(s"""```scala""")
+println(s"""libraryDependencies += "${detection.BuildInfo.organization}" %% "${detection.BuildInfo.name}" % "${detection.BuildInfo.version.split('+').head}"""")
+println(s"""```""")
 ```
