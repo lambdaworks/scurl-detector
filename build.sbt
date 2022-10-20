@@ -4,7 +4,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(
   List(
-    scalaVersion         := "2.13.8",
+    scalaVersion         := "2.13.10",
     organization         := "io.lambdaworks",
     organizationName     := "LambdaWorks",
     organizationHomepage := Some(url("https://www.lambdaworks.io/")),
@@ -39,7 +39,7 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 lazy val root = (project in file("."))
   .settings(
     name               := "scurl-detector",
-    crossScalaVersions := List("2.12.17", "2.13.8"),
+    crossScalaVersions := List("2.12.17", "2.13.10"),
     libraryDependencies ++= All,
     buildInfoKeys     := List[BuildInfoKey](organization, name, version),
     buildInfoPackage  := "detection",
