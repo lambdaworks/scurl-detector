@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ["11", "17"]
+        java: ["8", "11", "17"]
         scala: ["2.12.17", "2.13.10", "3.2.2"]
     steps:
       - name: Checkout current branch
@@ -48,7 +48,7 @@ jobs:
       - name: Run tests
         run: sbt ++${{ matrix.scala }}! test
 
-  test-deploy:
+  website:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -65,9 +65,26 @@ jobs:
       - name: Check website generation
         run: sbt docs/docusaurusCreateSite
 
+  publish-local:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3.3.0
+      - name: Setup Java
+        uses: actions/setup-java@v3.9.0
+        with:
+          distribution: temurin
+          java-version: 17
+          check-latest: true
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v6
+      - name: Check that building packages works
+        run: ./sbt +publishLocal
+
   ci:
     runs-on: ubuntu-latest
-    needs: [lint, test, test-deploy]
+    needs: [lint, test, website, publish-local]
     steps:
       - name: Aggregate outcomes
         run: echo "build succeeded"
