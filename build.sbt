@@ -2,9 +2,13 @@ import Dependencies._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+val Scala212: String = "2.12.17"
+val Scala213: String = "2.13.10"
+val Scala3: String   = "3.2.2"
+
 inThisBuild(
   List(
-    scalaVersion         := "2.13.10",
+    scalaVersion         := Scala213,
     organization         := "io.lambdaworks",
     organizationName     := "LambdaWorks",
     organizationHomepage := Some(url("https://www.lambdaworks.io/")),
@@ -39,11 +43,11 @@ ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaV
 lazy val root = (project in file("."))
   .settings(
     name               := "scurl-detector",
-    crossScalaVersions := List("2.12.17", "2.13.10"),
+    crossScalaVersions := List(Scala212, Scala213, Scala3),
     libraryDependencies ++= All,
     buildInfoKeys     := List[BuildInfoKey](organization, name, version),
     buildInfoPackage  := "detection",
-    semanticdbEnabled := true,
+    semanticdbEnabled := scalaVersion.value != Scala3, // enable SemanticDB
     semanticdbVersion := scalafixSemanticdb.revision,
     scalacOptions += {
       CrossVersion.partialVersion(scalaVersion.value) match {
