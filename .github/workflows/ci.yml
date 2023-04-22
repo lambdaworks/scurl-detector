@@ -80,7 +80,7 @@ jobs:
       - name: Cache scala dependencies
         uses: coursier/cache-action@v6
       - name: Check that building packages works
-        run: ./sbt +publishLocal
+        run: sbt +publishLocal
 
   ci:
     runs-on: ubuntu-latest
