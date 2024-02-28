@@ -13,7 +13,7 @@ Scala library that detects and extracts URLs from text.
 - [Code of Conduct](https://lambdaworks.github.io/scurl-detector/code-of-conduct/)
 - [License](LICENSE)
 
-[scala-version-badge]: https://img.shields.io/badge/scala-2.13.10-blue?logo=scala&color=red
+[scala-version-badge]: https://img.shields.io/badge/scala-2.13.13-blue?logo=scala&color=red
 
 [sonatype-releases-badge]: https://img.shields.io/nexus/r/https/s01.oss.sonatype.org/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Releases"
 [sonatype-releases-version]: https://s01.oss.sonatype.org/content/repositories/releases/io/lambdaworks/scurl-detector_2.13/ "Sonatype Releases"
