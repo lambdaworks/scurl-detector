@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object Dependencies {
 
@@ -14,7 +14,7 @@ object Dependencies {
 
   }
 
-  import Versions._
+  import Versions.*
 
   lazy val All: List[ModuleID] =
     List(
