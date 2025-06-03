@@ -48,7 +48,7 @@ object UrlDetectorOptions {
   /** Checks for bracket characters and more importantly quotes to start and end strings. */
   case object Json extends UrlDetectorOptions
 
-  /** Checks JSON format or but also looks for a single quote. */
+  /** Checks JSON format but also looks for a single quote. */
   case object Javascript extends UrlDetectorOptions
 
   /**
@@ -57,7 +57,7 @@ object UrlDetectorOptions {
    */
   case object Xml extends UrlDetectorOptions
 
-  /** Checks all of the rules besides brackets. This is XML but also can contain Javascript. */
+  /** Checks all the rules besides brackets. This is XML but also can contain JavaScript. */
   case object Html extends UrlDetectorOptions
 
   /** Checks for single level domains as well. Ex: go/, http://localhost */
