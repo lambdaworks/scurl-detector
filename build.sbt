@@ -26,6 +26,8 @@ inThisBuild(
   )
 )
 
+publishTo := sonatypePublishToBundle.value
+
 addCommandAlias("prepare", "fix; fmt")
 addCommandAlias("check", "fixCheck; fmtCheck")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
