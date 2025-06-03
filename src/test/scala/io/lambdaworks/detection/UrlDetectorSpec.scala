@@ -145,15 +145,14 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     }
 
   }
+
   it should "correctly extract URLs with brackets in the path" in {
-    val detector = UrlDetector(UrlDetectorOptions.Default)
+    val detector = UrlDetector(UrlDetectorOptions.BracketMatch)
 
     val text = "Check this URL: https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"
-
-    val urls = detector.extractWithNestedBrackets(text)
+    val urls = detector.extract(text)
 
     urls should contain (AbsoluteUrl.parse("https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"))
-
   }
 
   it should "extract the expected URLs with the default options and the specified allowed URLs" in {

@@ -35,13 +35,17 @@ final class UrlDetector private (
   def extract(content: String): Set[AbsoluteUrl] = {
     val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
-    detector
+    val baseUrls = detector
       .detect()
       .asScala
       .toList
       .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
+
+    val nestedUrls = extractWithNestedBrackets(content)
+
+    baseUrls ++ nestedUrls
   }
 
   /**
@@ -113,17 +117,15 @@ final class UrlDetector private (
   private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
     options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
-  def extractWithNestedBrackets(content: String): Set[AbsoluteUrl] = {
-    val baseUrls = extract(content)
-
-    val nestedUrls = nestedBracketsRegex.findAllMatchIn(content).map(_.group(0)).toSet
-
-    val parsedNestedUrls = nestedUrls.flatMap { urlString =>
-      AbsoluteUrl.parseOption(sanitize(urlString))
-        .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
-    }
-
-    baseUrls ++ parsedNestedUrls
+  private def extractWithNestedBrackets(content: String): Set[AbsoluteUrl] = {
+    nestedBracketsRegex
+      .findAllMatchIn(content)
+      .map(_.group(0))
+      .flatMap { urlString =>
+        AbsoluteUrl.parseOption(sanitize(urlString))
+          .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
+      }
+      .toSet
   }
 
 }
@@ -146,9 +148,8 @@ object UrlDetector {
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
 
-  private val nestedBracketsRegex: Regex = new Regex(
-    """(https?://[^\s\[\]{}"'<>]*?(?:\([^\s\[\]{}"'<>]*\))*[^\s\[\]{}"'<>]*)"""
-  )
+  private final val nestedBracketsRegex: Regex = """((https?://)?[a-zA-Z0-9.-]+\.[a-z]{2,}(/[^\s\[\]{}"'<>]*)?)""".r
+  //private final val nestedBracketsRegex: Regex = """((https?://)?[a-zA-Z0-9.-]+\.[a-z]{2,}(\/[^\s<>"'\[\]{}]*)?)""".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
