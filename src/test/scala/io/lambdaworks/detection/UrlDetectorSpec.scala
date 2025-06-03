@@ -1,6 +1,6 @@
 package io.lambdaworks.detection
 
-import io.lemonlabs.uri.{Host, Url}
+import io.lemonlabs.uri.{AbsoluteUrl, Host, Url}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -143,6 +143,16 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(textExpectedUrls) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
+
+  }
+  it should "correctly extract URLs with brackets in the path" in {
+    val detector = UrlDetector(UrlDetectorOptions.Default)
+
+    val text = "Check this URL: https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"
+
+    val urls = detector.extractWithNestedBrackets(text)
+
+    urls should contain (AbsoluteUrl.parse("https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"))
 
   }
 

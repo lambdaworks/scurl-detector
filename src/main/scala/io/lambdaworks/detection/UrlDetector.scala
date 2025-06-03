@@ -113,6 +113,19 @@ final class UrlDetector private (
   private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
     options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
+  def extractWithNestedBrackets(content: String): Set[AbsoluteUrl] = {
+    val baseUrls = extract(content)
+
+    val nestedUrls = nestedBracketsRegex.findAllMatchIn(content).map(_.group(0)).toSet
+
+    val parsedNestedUrls = nestedUrls.flatMap { urlString =>
+      AbsoluteUrl.parseOption(sanitize(urlString))
+        .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
+    }
+
+    baseUrls ++ parsedNestedUrls
+  }
+
 }
 
 object UrlDetector {
@@ -132,6 +145,10 @@ object UrlDetector {
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
+
+  private val nestedBracketsRegex: Regex = new Regex(
+    """(https?://[^\s\[\]{}"'<>]*?(?:\([^\s\[\]{}"'<>]*\))*[^\s\[\]{}"'<>]*)"""
+  )
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
