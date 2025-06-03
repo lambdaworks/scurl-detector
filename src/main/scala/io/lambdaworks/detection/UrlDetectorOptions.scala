@@ -57,7 +57,7 @@ object UrlDetectorOptions {
    */
   case object Xml extends UrlDetectorOptions
 
-  /** Checks all the rules besides brackets. This is XML but also can contain Javascript. */
+  /** Checks all the rules besides brackets. This is XML but also can contain JavaScript. */
   case object Html extends UrlDetectorOptions
 
   /** Checks for single level domains as well. Ex: go/, http://localhost */
