@@ -10,15 +10,14 @@ import org.apache.commons.validator.routines.EmailValidator
 import scala.collection.immutable.SortedSet
 import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
-
 import UrlDetector._
 
 final class UrlDetector private (
-  options: UrlDetectorOptions,
-  allowed: Option[NonEmptySet[Host]],
-  denied: Option[NonEmptySet[Host]],
-  emailValidator: EmailValidator
-) {
+                                  options: UrlDetectorOptions,
+                                  allowed: Option[NonEmptySet[Host]],
+                                  denied: Option[NonEmptySet[Host]],
+                                  emailValidator: EmailValidator
+                                ) {
 
   private val allowedWithoutWww: Option[NonEmptySet[Host]] =
     allowed.flatMap(allowed => NonEmptySet.fromSet(allowed.toSortedSet.flatMap(removeWwwSubdomain)))
@@ -32,20 +31,50 @@ final class UrlDetector private (
    * @param content text from which URLs are being extracted
    * @return set of found URLs
    */
+
   def extract(content: String): Set[AbsoluteUrl] = {
     val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
-    val baseUrls = detector
+    detector
       .detect()
       .asScala
       .toList
-      .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
+      .map { lUrl =>
+        val rawUrl = lUrl.toString
+        val cleanedUrl = cleanUrlForBracketMatch(content, rawUrl)
+        AbsoluteUrl.parse(sanitize(cleanedUrl))
+      }
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
+  }
 
-    val nestedUrls = extractWithNestedBrackets(content)
+  private def cleanUrlForBracketMatch(originalText: String, urlStr: String): String = {
+    val allowedSpecialChars: Set[Char] = Set(
+      '-', '.', '_', '~', ':', '/', '?', '#', '[', ']', '@',
+      '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '%'
+    )
 
-    baseUrls ++ nestedUrls
+    def isAllowedUrlChar(c: Char): Boolean = {
+      c.isLetterOrDigit || allowedSpecialChars.contains(c)
+    }
+
+    val startIndexOpt = Option(originalText.indexOf(urlStr)).filter(_ >= 0)
+
+    startIndexOpt match {
+      case None => urlStr
+
+      case Some(startIndex) =>
+        val extendedUrl = originalText
+          .substring(startIndex)
+          .takeWhile(isAllowedUrlChar)
+
+        val emptyParensPattern = """\(\)[^()]*""".r
+
+        emptyParensPattern.findFirstMatchIn(extendedUrl) match {
+          case Some(m) => extendedUrl.substring(0, m.start)
+          case None    => extendedUrl
+        }
+    }
   }
 
   /**
@@ -117,17 +146,6 @@ final class UrlDetector private (
   private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
     options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
-  private def extractWithNestedBrackets(content: String): Set[AbsoluteUrl] = {
-    nestedBracketsRegex
-      .findAllMatchIn(content)
-      .map(_.group(0))
-      .flatMap { urlString =>
-        AbsoluteUrl.parseOption(sanitize(urlString))
-          .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
-      }
-      .toSet
-  }
-
 }
 
 object UrlDetector {
@@ -147,9 +165,6 @@ object UrlDetector {
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
   private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
-
-  private final val nestedBracketsRegex: Regex = """((https?://)?[a-zA-Z0-9.-]+\.[a-z]{2,}(/[^\s\[\]{}"'<>]*)?)""".r
-  //private final val nestedBracketsRegex: Regex = """((https?://)?[a-zA-Z0-9.-]+\.[a-z]{2,}(\/[^\s<>"'\[\]{}]*)?)""".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
