@@ -45,7 +45,11 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ),
         (
           "Parse https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN",
-          Set(Url.parse("https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"))
+          Set(
+            Url.parse(
+              "https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"
+            )
+          )
         ),
         (
           "192.168.1.3 255.255.1.34 1234.34.34.5 0.0.0.0 192.168.1.257 2.3.4.5",
@@ -289,19 +293,23 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
             Url.parse("http://test.link/g3WMrh"),
             Url.parse("http://test.link/HWRqhq"),
             Url.parse("http://test.link/KeKy")
-          ),
-        ),
-          (
-            "Parse https://site.com/(v=1.2)",
-            Set(Url.parse("https://site.com/(v=1.2"))
-          ),
-        (
-          "Parse https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN",
-          Set(Url.parse("https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"))
+          )
         ),
         (
-          "Parse http://www.website.com/?utm_source=google%5BB%2B%5D&utm_medium=cpc&utm_content=google_ad(B)&utm_campaign=product",
-          Set(Url.parse("http://www.website.com/?utm_source=google%5BB%2B%5D&utm_medium=cpc&utm_content=google_ad(B)&utm_campaign=product"))
+          "Parse https://site.com/(v=1.2)",
+          Set(Url.parse("https://site.com/(v=1.2"))
+        ),
+        (
+          "Parse https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN " +
+            "and http://www.website.com/?utm_source=google%5BB%2B%5D&utm_medium=cpc&utm_content=google_ad(B)&utm_campaign=product",
+          Set(
+            Url.parse(
+              "https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa752574(v=vs.85)?redirectedfrom=MSDN"
+            ),
+            Url.parse(
+              "http://www.website.com/?utm_source=google%5BB%2B%5D&utm_medium=cpc&utm_content=google_ad(B)&utm_campaign=product"
+            )
+          )
         )
       )
 
