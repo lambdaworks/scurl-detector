@@ -87,19 +87,16 @@ final class UrlDetector private (
   private def allowedUrl(url: AbsoluteUrl): Boolean =
     allowedWithoutWww.forall(containsHost(_, url)) && deniedWithoutWww.forall(!containsHost(_, url))
 
-  private def cleanUrlForBracketMatch(originalText: String, urlStr: String): String = {
+  private def cleanUrlForBracketMatch(content: String, url: String): String = {
     def isAllowedUrlChar(c: Char): Boolean =
       c.isLetterOrDigit || AllowedSpecialChars.contains(c)
 
-    Option(originalText.indexOf(urlStr)).filter(_ >= 0).fold(urlStr) { startIndex =>
-      val extendedUrl = originalText
-        .substring(startIndex)
-        .takeWhile(isAllowedUrlChar)
+    Option(content.indexOf(url)).filter(_ >= 0).fold(url) { from =>
+      val extendedUrl = content.substring(from).takeWhile(isAllowedUrlChar)
 
       EmptyParensRegex
         .findFirstMatchIn(extendedUrl)
-        .map(m => extendedUrl.substring(0, m.start))
-        .getOrElse(extendedUrl)
+        .fold(extendedUrl)(m => extendedUrl.substring(0, m.start))
     }
   }
 
@@ -152,7 +149,7 @@ object UrlDetector {
     '-', '.', '_', '~', ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '%'
   )
 
-  private final val EmptyParensRegex: Regex = """\(\)[^()]*""".r
+  private final val EmptyParensRegex: Regex = "\\(\\)[^()]*".r
   private final val SanitizeRegex: Regex    = "[,!-.`/]+$".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
