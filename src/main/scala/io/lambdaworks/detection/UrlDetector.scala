@@ -39,7 +39,7 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(lUrl => AbsoluteUrl.parse(sanitize(lUrl.toString)))
+      .map(url => AbsoluteUrl.parse(sanitize(cleanUrlForBracketMatch(content, url.toString))))
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
@@ -86,6 +86,19 @@ final class UrlDetector private (
   private def allowedUrl(url: AbsoluteUrl): Boolean =
     allowedWithoutWww.forall(containsHost(_, url)) && deniedWithoutWww.forall(!containsHost(_, url))
 
+  private def cleanUrlForBracketMatch(content: String, url: String): String = {
+    def isAllowedUrlChar(c: Char): Boolean =
+      c.isLetterOrDigit || AllowedSpecialChars.contains(c)
+
+    Option(content.indexOf(url)).filter(_ >= 0).fold(url) { from =>
+      val extendedUrl = content.substring(from).takeWhile(isAllowedUrlChar)
+
+      EmptyParensRegex
+        .findFirstMatchIn(extendedUrl)
+        .fold(extendedUrl)(m => extendedUrl.substring(0, m.start))
+    }
+  }
+
   private def containsHost(hosts: NonEmptySet[Host], url: AbsoluteUrl): Boolean =
     hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
 
@@ -131,7 +144,12 @@ object UrlDetector {
    */
   lazy val default: UrlDetector = UrlDetector(UrlDetectorOptions.Default)
 
-  private final val SanitizeRegex: Regex = "[,!-.`/]+$".r
+  private final val AllowedSpecialChars: Set[Char] = Set(
+    '-', '.', '_', '~', ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '%'
+  )
+
+  private final val EmptyParensRegex: Regex = "\\(\\)[^()]*".r
+  private final val SanitizeRegex: Regex    = "[,!-.`/]+$".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
