@@ -32,7 +32,6 @@ final class UrlDetector private (
    * @param content text from which URLs are being extracted
    * @return set of found URLs
    */
-
   def extract(content: String): Set[AbsoluteUrl] = {
     val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
 
