@@ -17,5 +17,5 @@ Scala library that detects and extracts URLs from text.
 
 [sonatype-releases-badge]: https://img.shields.io/nexus/r/https/s01.oss.sonatype.org/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Releases"
 [sonatype-releases-version]: https://s01.oss.sonatype.org/content/repositories/releases/io/lambdaworks/scurl-detector_2.13/ "Sonatype Releases"
-[sonatype-snapshots-badge]: https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Snapshots"
-[sonatype-snapshots-version]: https://s01.oss.sonatype.org/content/repositories/snapshots/io/lambdaworks/scurl-detector_2.13/ "Sonatype Snapshots"
+[sonatype-snapshots-badge]: https://img.shields.io/nexus/s/https/central.sonatype.com/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Snapshots"
+[sonatype-snapshots-version]: https://central.sonatype.com/repository/maven-snapshots/io/lambdaworks/scurl-detector_2.13/ "Sonatype Snapshots"
