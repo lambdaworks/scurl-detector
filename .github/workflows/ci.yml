@@ -22,7 +22,7 @@ jobs:
           java-version: 17
           check-latest: true
       - name: Cache Scala dependencies
-        uses: coursier/cache-action@v6
+        uses: coursier/cache-action@v7
       - name: Check code formatting
         run: ./sbt check
 
@@ -44,7 +44,7 @@ jobs:
           java-version: 17
           check-latest: true
       - name: Cache Scala dependencies
-        uses: coursier/cache-action@v6
+        uses: coursier/cache-action@v7
       - name: Run tests
         run: ./sbt ++${{ matrix.scala }}! test
 
@@ -61,7 +61,7 @@ jobs:
           java-version: 17
           check-latest: true
       - name: Cache Scala dependencies
-        uses: coursier/cache-action@v6
+        uses: coursier/cache-action@v7
       - name: Check website generation
         run: ./sbt docs/docusaurusCreateSite
 
@@ -78,7 +78,7 @@ jobs:
           java-version: 17
           check-latest: true
       - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
+        uses: coursier/cache-action@v7
       - name: Check that building packages works
         run: ./sbt +publishLocal
 
