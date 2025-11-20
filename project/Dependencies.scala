@@ -7,7 +7,7 @@ object Dependencies {
     val UrlDetector           = "0.1.23"
     val ScalaTest             = "3.2.19"
     val CommonsValidator      = "1.10.1"
-    val ScalaCollectionCompat = "2.13.0"
+    val ScalaCollectionCompat = "2.14.0"
     val ScalaUri              = "4.2.0"
     val OrganizeImports       = "0.6.0"
     val Scaluzzi              = "0.1.23"
