@@ -10,8 +10,8 @@ import org.apache.commons.validator.routines.EmailValidator
 import java.net.URLDecoder
 import scala.collection.immutable.SortedSet
 import scala.jdk.CollectionConverters._
-import scala.util.matching.Regex
 import scala.util.Try
+import scala.util.matching.Regex
 
 import UrlDetector._
 
@@ -113,26 +113,26 @@ final class UrlDetector private (
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
   private def normalizeEncodedSpaces(url: String): String = {
-      val protocolPattern = "^(https?://)(.*)$".r
-      
-      url match {
-        case protocolPattern(protocol, rest) =>
-          val pathStartIdx = rest.indexWhere(c => c == '/' || c == '?' || c == '#')
-          
-          if (pathStartIdx == -1) {
-            val decodedHost = Try(URLDecoder.decode(rest, Encoding)).getOrElse(rest).trim
-            protocol + decodedHost
-          } else {
-            val hostPart = rest.substring(0, pathStartIdx)
-            val pathPart = rest.substring(pathStartIdx)
-            val decodedHost = Try(URLDecoder.decode(hostPart, Encoding)).getOrElse(hostPart).trim
-            protocol + decodedHost + pathPart
-          }
-        case _ =>
-          Try(URLDecoder.decode(url, Encoding)).getOrElse(url).trim
-      }
+    val protocolPattern = "^(https?://)(.*)$".r
+
+    url match {
+      case protocolPattern(protocol, rest) =>
+        val pathStartIdx = rest.indexWhere(c => c == '/' || c == '?' || c == '#')
+
+        if (pathStartIdx == -1) {
+          val decodedHost = Try(URLDecoder.decode(rest, Encoding)).getOrElse(rest).trim
+          protocol + decodedHost
+        } else {
+          val hostPart    = rest.substring(0, pathStartIdx)
+          val pathPart    = rest.substring(pathStartIdx)
+          val decodedHost = Try(URLDecoder.decode(hostPart, Encoding)).getOrElse(hostPart).trim
+          protocol + decodedHost + pathPart
+        }
+      case _ =>
+        Try(URLDecoder.decode(url, Encoding)).getOrElse(url).trim
     }
-    
+  }
+
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
       host.apexDomain.flatMap(Host.parseOption)
