@@ -41,7 +41,7 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(url => AbsoluteUrl.parse(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString)))))
+      .map(url => AbsoluteUrl.parse(normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))))
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
@@ -108,6 +108,9 @@ final class UrlDetector private (
     case _ @(_: IpV4 | _: IpV6) => true
     case _                      => false
   }
+
+  private def normalizeProtocolRelativeUrl(url: String): String =
+    if (url.startsWith("//")) s"http:$url" else url
 
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
