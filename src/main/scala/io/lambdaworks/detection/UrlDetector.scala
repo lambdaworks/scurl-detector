@@ -112,26 +112,17 @@ final class UrlDetector private (
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
-  private def normalizeEncodedSpaces(url: String): String = {
-    val protocolPattern = "^(https?://)(.*)$".r
+  private def decodeOrKeep(s: String): String =
+    Try(URLDecoder.decode(s, Encoding)).getOrElse(s).trim
 
+  private def normalizeEncodedSpaces(url: String): String =
     url match {
       case protocolPattern(protocol, rest) =>
-        val pathStartIdx = rest.indexWhere(c => c == '/' || c == '?' || c == '#')
-
-        if (pathStartIdx == -1) {
-          val decodedHost = Try(URLDecoder.decode(rest, Encoding)).getOrElse(rest).trim
-          protocol + decodedHost
-        } else {
-          val hostPart    = rest.substring(0, pathStartIdx)
-          val pathPart    = rest.substring(pathStartIdx)
-          val decodedHost = Try(URLDecoder.decode(hostPart, Encoding)).getOrElse(hostPart).trim
-          protocol + decodedHost + pathPart
-        }
+        val (host, path) = rest.span(c => !PathDelimiters(c))
+        protocol + decodeOrKeep(host) + path
       case _ =>
-        Try(URLDecoder.decode(url, Encoding)).getOrElse(url).trim
+        decodeOrKeep(url)
     }
-  }
 
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
@@ -176,5 +167,8 @@ object UrlDetector {
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
-  private final val Encoding = "UTF-8";
+  private final val Encoding                  = "UTF-8";
+  private final val PathDelimiters: Set[Char] = Set('/', '?', '#')
+  private final val protocolPattern           = "^(https?://)(.*)$".r
+
 }
