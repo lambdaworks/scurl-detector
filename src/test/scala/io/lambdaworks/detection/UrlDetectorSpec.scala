@@ -432,4 +432,43 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "extract URLs with leading or trailing encoded spaces correctly" in {
+
+    val testEncodedSpaces =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Check out http://%20leadingspace.com for more info",
+          Set(Url.parse("http://leadingspace.com"))
+        ),
+        (
+          "Visit http://trailingspace.com%20 today",
+          Set(Url.parse("http://trailingspace.com"))
+        ),
+        (
+          "Both http://%20bothspaces.com%20 here",
+          Set(Url.parse("http://bothspaces.com"))
+        ),
+        (
+          "Multiple http://%20%20%20multispace.com spaces",
+          Set(Url.parse("http://multispace.com"))
+        ),
+        (
+          "Normal https://normalurl.com/path should work",
+          Set(Url.parse("https://normalurl.com/path"))
+        ),
+        (
+          "Path http://example.com/%20path with space encoding",
+          Set(Url.parse("http://example.com/%20path"))
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testEncodedSpaces) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
 }

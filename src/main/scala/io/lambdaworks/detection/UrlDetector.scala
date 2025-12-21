@@ -7,8 +7,10 @@ import io.lemonlabs.uri.Host.orderHost
 import io.lemonlabs.uri._
 import org.apache.commons.validator.routines.EmailValidator
 
+import java.net.URLDecoder
 import scala.collection.immutable.SortedSet
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 import scala.util.matching.Regex
 
 import UrlDetector._
@@ -39,7 +41,7 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(url => AbsoluteUrl.parse(sanitize(cleanUrlForBracketMatch(content, url.toString))))
+      .map(url => AbsoluteUrl.parse(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString)))))
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
@@ -110,6 +112,18 @@ final class UrlDetector private (
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
+  private def decodeOrKeep(s: String): String =
+    Try(URLDecoder.decode(s, Encoding)).getOrElse(s).trim
+
+  private def normalizeEncodedSpaces(url: String): String =
+    url match {
+      case protocolPattern(protocol, rest) =>
+        val (host, path) = rest.span(c => !PathDelimiters(c))
+        protocol + decodeOrKeep(host) + path
+      case _ =>
+        decodeOrKeep(url)
+    }
+
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
       host.apexDomain.flatMap(Host.parseOption)
@@ -152,5 +166,9 @@ object UrlDetector {
   private final val SanitizeRegex: Regex    = "[,!-.`/]+$".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
+
+  private final val Encoding                  = "UTF-8";
+  private final val PathDelimiters: Set[Char] = Set('/', '?', '#')
+  private final val protocolPattern           = "^(https?://)(.*)$".r
 
 }
