@@ -478,15 +478,15 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Check out //lambdaworks.io for more info",
-          Set(Url.parse("http://lambdaworks.io"))
+          Set(Url.parse("https://lambdaworks.io"))
         ),
         (
           "Visit //www.example.com/path/to/resource",
-          Set(Url.parse("http://www.example.com/path/to/resource"))
+          Set(Url.parse("https://www.example.com/path/to/resource"))
         ),
         (
           "Multiple URLs: //google.com and //github.com/repo",
-          Set(Url.parse("http://google.com"), Url.parse("http://github.com/repo"))
+          Set(Url.parse("https://google.com"), Url.parse("https://github.com/repo"))
         )
       )
 

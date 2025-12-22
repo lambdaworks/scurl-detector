@@ -110,7 +110,7 @@ final class UrlDetector private (
   }
 
   private def normalizeProtocolRelativeUrl(url: String): String =
-    if (url.startsWith("//")) s"http:$url" else url
+    if (url.startsWith("//")) s"https:$url" else url
 
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
