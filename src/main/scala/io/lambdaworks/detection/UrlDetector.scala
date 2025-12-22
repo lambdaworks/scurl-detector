@@ -41,7 +41,11 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(url => AbsoluteUrl.parse(normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))))
+      .map(url =>
+        AbsoluteUrl.parse(
+          normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
+        )
+      )
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
