@@ -41,7 +41,11 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(url => AbsoluteUrl.parse(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString)))))
+      .map(url =>
+        AbsoluteUrl.parse(
+          normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
+        )
+      )
       .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
       .toSet
   }
@@ -104,16 +108,13 @@ final class UrlDetector private (
   private def containsHost(hosts: NonEmptySet[Host], url: AbsoluteUrl): Boolean =
     hosts.exists(host => host.subdomain.fold(host.apexDomain.exists(url.apexDomain.contains))(_ => host == url.host))
 
+  private def decodeOrKeep(s: String): String =
+    Try(URLDecoder.decode(s, Encoding)).getOrElse(s).trim
+
   private def isIp(url: AbsoluteUrl): Boolean = url.host match {
     case _ @(_: IpV4 | _: IpV6) => true
     case _                      => false
   }
-
-  private def notEmail(url: AbsoluteUrl): Boolean =
-    !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
-
-  private def decodeOrKeep(s: String): String =
-    Try(URLDecoder.decode(s, Encoding)).getOrElse(s).trim
 
   private def normalizeEncodedSpaces(url: String): String =
     url match {
@@ -123,6 +124,12 @@ final class UrlDetector private (
       case _ =>
         decodeOrKeep(url)
     }
+
+  private def normalizeProtocolRelativeUrl(url: String): String =
+    if (url.startsWith("//")) s"https:$url" else url
+
+  private def notEmail(url: AbsoluteUrl): Boolean =
+    !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
 
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {

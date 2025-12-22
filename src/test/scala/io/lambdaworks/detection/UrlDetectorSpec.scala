@@ -471,4 +471,31 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "extract protocol-relative URLs" in {
+
+    val testProtocolRelativeUrls =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Check out //lambdaworks.io for more info",
+          Set(Url.parse("https://lambdaworks.io"))
+        ),
+        (
+          "Visit //www.example.com/path/to/resource",
+          Set(Url.parse("https://www.example.com/path/to/resource"))
+        ),
+        (
+          "Multiple URLs: //google.com and //github.com/repo",
+          Set(Url.parse("https://google.com"), Url.parse("https://github.com/repo"))
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testProtocolRelativeUrls) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
 }
