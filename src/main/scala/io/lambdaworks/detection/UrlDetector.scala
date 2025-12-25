@@ -35,7 +35,8 @@ final class UrlDetector private (
    * @return set of found URLs
    */
   def extract(content: String): Set[AbsoluteUrl] = {
-    val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+    val preprocessedContent = preprocessSpecialCharPrefixes(content)
+    val detector            = new LUrlDetector(preprocessedContent, LUrlDetectorOptions.valueOf(options.value))
 
     detector
       .detect()
@@ -126,10 +127,13 @@ final class UrlDetector private (
     }
 
   private def normalizeProtocolRelativeUrl(url: String): String =
-    if (url.startsWith("//")) s"https:$url" else url
+    if (url.startsWith("//")) s"$DefaultScheme:$url" else url
 
   private def notEmail(url: AbsoluteUrl): Boolean =
     !emailValidator.isValid(url.toProtocolRelativeUrl.toString.replace("//", ""))
+
+  private def preprocessSpecialCharPrefixes(content: String): String =
+    SpecialCharPrefixPattern.replaceAllIn(content, "$1$2 $3")
 
   private def removeWwwSubdomain(host: Host): Option[Host] =
     if (host.subdomain.contains("www")) {
@@ -169,13 +173,15 @@ object UrlDetector {
     '-', '.', '_', '~', ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '%'
   )
 
-  private final val EmptyParensRegex: Regex = "\\(\\)[^()]*".r
-  private final val SanitizeRegex: Regex    = "[,!-.`/]+$".r
+  private final val EmptyParensRegex: Regex         = "\\(\\)[^()]*".r
+  private final val SanitizeRegex: Regex            = "^[#@!$]+|[,!-.`/]+$".r
+  private final val SpecialCharPrefixPattern: Regex = "(^|\\s)([#@!$~*])([a-zA-Z0-9])".r
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
-  private final val Encoding                  = "UTF-8";
-  private final val PathDelimiters: Set[Char] = Set('/', '?', '#')
-  private final val protocolPattern           = "^(https?://)(.*)$".r
+  private final val Encoding        = "UTF-8"
+  private final val DefaultScheme   = "http"
+  private final val PathDelimiters  = Set('/', '?', '#')
+  private final val protocolPattern = "^(https?://)(.*)$".r
 
 }
