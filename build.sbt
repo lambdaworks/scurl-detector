@@ -34,7 +34,6 @@ addCommandAlias("fix", "scalafixAll")
 addCommandAlias("fixCheck", "scalafixAll --check")
 
 ThisBuild / scalafixDependencies ++= ScalaFix
-ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
 
 lazy val root = (project in file("."))
   .settings(

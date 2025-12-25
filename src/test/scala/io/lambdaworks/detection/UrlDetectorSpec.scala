@@ -498,4 +498,133 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "extract the same URLs with extractAll as extract for standard URLs" in {
+
+    val textExpectedUrls =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Hey, this is our website - check it outhttps://lambdaworks.io/hello",
+          Set(Url.parse("https://lambdaworks.io/hello"))
+        ),
+        (
+          "Hey, this is our website - check it outftp://lambdaworks.io./",
+          Set(Url.parse("ftp://lambdaworks.io"))
+        ),
+        (
+          "Hey, this is our website - check it outhttp://lambdaworks.io./",
+          Set(Url.parse("http://lambdaworks.io"))
+        ),
+        (
+          "Parse:wwww.google.com, google.com, slack.test.io!!!!892839283, lw.com/hello,,,, lw.io/something, https://youtube.com/.",
+          Set(
+            Url.parse("http://wwww.google.com"),
+            Url.parse("http://google.com"),
+            Url.parse("http://slack.test.io"),
+            Url.parse("http://lw.com/hello"),
+            Url.parse("http://lw.io/something"),
+            Url.parse("https://youtube.com")
+          )
+        ),
+        (
+          "Parse http://test.link/g3WMrh and http://test.link/HWRqhq and test.link/aaa 6.30pm as url",
+          Set(
+            Url.parse("http://test.link/g3WMrh"),
+            Url.parse("http://test.link/HWRqhq"),
+            Url.parse("http://test.link/aaa")
+          )
+        ),
+        (
+          "192.168.1.3 255.255.1.34 1234.34.34.5 0.0.0.0 192.168.1.257 2.3.4.5",
+          Set(
+            Url.parse("http://192.168.1.3"),
+            Url.parse("http://255.255.1.34"),
+            Url.parse("http://0.0.0.0"),
+            Url.parse("http://2.3.4.5")
+          )
+        ),
+        (
+          "http://user:pass@host.com host.com",
+          Set(Url.parse("http://user:pass@host.com"), Url.parse("http://host.com"))
+        ),
+        (
+          "name.lastname@gmail.com",
+          Set.empty[Url]
+        ),
+        (
+          "taro@storm.audio janedoe@yahoo.com jdoe@gmail.com",
+          Set.empty[Url]
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(textExpectedUrls) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extractAll(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
+  it should "extract JDBC URLs and credential patterns using extractAll" in {
+
+    val testJdbcAndCredentials =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "jdbc:postgres://user:pass@host",
+          Set(Url.parse("jdbc:postgres://user:pass@host"))
+        ),
+        (
+          "user:pass@host",
+          Set(Url.parse("http://user:pass@host"))
+        ),
+        (
+          "jdbc:mysql://admin:secret@database.example.com:3306/mydb",
+          Set(Url.parse("jdbc:mysql://admin:secret@database.example.com:3306/mydb"))
+        ),
+        (
+          "Check this jdbc:postgresql://localhost:5432/testdb and http://example.com",
+          Set(
+            Url.parse("jdbc:postgresql://localhost:5432/testdb"),
+            Url.parse("http://example.com")
+          )
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testJdbcAndCredentials) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extractAll(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
+  it should "not double-extract credentials from HTTP URLs with authentication" in {
+
+    val testCases =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          // Should only extract the full HTTP URL, not also extract user:pass@host.com as a separate credential pattern
+          "http://user:pass@host.com host.com",
+          Set(Url.parse("http://user:pass@host.com"), Url.parse("http://host.com"))
+        ),
+        (
+          // Should extract the HTTP URL and the standalone credential pattern
+          "http://admin:secret@example.com and also user:pass@localhost",
+          Set(
+            Url.parse("http://admin:secret@example.com"),
+            Url.parse("http://user:pass@localhost")
+          )
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testCases) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extractAll(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
 }

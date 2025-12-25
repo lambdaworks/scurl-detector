@@ -51,6 +51,37 @@ final class UrlDetector private (
   }
 
   /**
+   * Method that extracts all URIs from text, including web URLs, JDBC connection strings, and other URI types.
+   *
+   * @param content text from which URIs are being extracted
+   * @return set of found URIs (includes both standard web URLs and opaque URIs like JDBC)
+   */
+  def extractAll(content: String): Set[Url] = {
+    val detector = new LUrlDetector(content, LUrlDetectorOptions.valueOf(options.value))
+
+    val jdbcUrls       = extractJdbcUrls(content)
+    val credentialUrls = extractCredentialUrls(content)
+
+    val jdbcUrlStrings = jdbcUrls.map(_.toString).toSet
+
+    val standardUrls = detector
+      .detect()
+      .asScala
+      .toList
+      .map(url =>
+        AbsoluteUrl.parse(
+          normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
+        )
+      )
+      .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
+      .filterNot { url =>
+        jdbcUrlStrings.exists(jdbcUrl => jdbcUrl.contains(url.toString.replaceFirst("^https?://", "")))
+      }
+
+    (standardUrls ++ jdbcUrls ++ credentialUrls).toSet
+  }
+
+  /**
    * Method that creates a [[io.lambdaworks.detection.UrlDetector]] with a set of hosts to allow.
    *
    * @param host required host to allow
@@ -147,6 +178,21 @@ final class UrlDetector private (
   private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
     options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
+  private def extractJdbcUrls(content: String): List[Url] = {
+    val matches = JdbcUrlRegex.findAllMatchIn(content).toList
+    matches.flatMap { m =>
+      Try(Url.parse(m.matched)).toOption
+    }
+  }
+
+  private def extractCredentialUrls(content: String): List[Url] =
+    CredentialUrlRegex
+      .findAllMatchIn(content)
+      .toList
+      .flatMap { m =>
+        Try(Url.parse(s"http://${m.matched}")).toOption
+      }
+
 }
 
 object UrlDetector {
@@ -177,5 +223,9 @@ object UrlDetector {
   private final val Encoding                  = "UTF-8";
   private final val PathDelimiters: Set[Char] = Set('/', '?', '#')
   private final val protocolPattern           = "^(https?://)(.*)$".r
+
+  private final val JdbcUrlRegex: Regex = "jdbc:[a-z]+://[^\\s]+".r
+
+  private final val CredentialUrlRegex: Regex = "(?<!:|/)\\b([a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+)\\b".r
 
 }
