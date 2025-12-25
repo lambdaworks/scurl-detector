@@ -478,15 +478,15 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
         ("text", "expectedUrls"),
         (
           "Check out //lambdaworks.io for more info",
-          Set(Url.parse("https://lambdaworks.io"))
+          Set(Url.parse("http://lambdaworks.io"))
         ),
         (
           "Visit //www.example.com/path/to/resource",
-          Set(Url.parse("https://www.example.com/path/to/resource"))
+          Set(Url.parse("http://www.example.com/path/to/resource"))
         ),
         (
           "Multiple URLs: //google.com and //github.com/repo",
-          Set(Url.parse("https://google.com"), Url.parse("https://github.com/repo"))
+          Set(Url.parse("http://google.com"), Url.parse("http://github.com/repo"))
         )
       )
 
@@ -534,7 +534,75 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     forAll(testUserinfoWithoutScheme) { (text: String, expectedUrls: Set[Url]) =>
       detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
     }
+  }
 
+  it should "add default scheme to URLs without schemas" in {
+
+    val testUrlsWithoutSchemas =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Visit github.com for search",
+          Set(Url.parse("http://github.com"))
+        ),
+        (
+          "example.com/path/to/resource",
+          Set(Url.parse("http://example.com/path/to/resource"))
+        ),
+        (
+          "//subdomain.example.org has info",
+          Set(Url.parse("http://subdomain.example.org"))
+        ),
+        (
+          "Connect to 192.168.1.1",
+          Set(Url.parse("http://192.168.1.1"))
+        ),
+        (
+          "Mix of google.com and https://secure.com",
+          Set(Url.parse("http://google.com"), Url.parse("https://secure.com"))
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testUrlsWithoutSchemas) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
+  it should "extract URLs with special character prefixes" in {
+
+    val testSpecialCharPrefixes =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Check http://www.google.com/test#link",
+          Set(Url.parse("http://www.google.com/test#link"))
+        ),
+        (
+          "Check *google.com for info",
+          Set(Url.parse("http://google.com"))
+        ),
+        (
+          "Visit #github.com please",
+          Set(Url.parse("http://github.com"))
+        ),
+        (
+          "See example.com and !www.example.org",
+          Set(Url.parse("http://example.com"), Url.parse("http://www.example.org"))
+        ),
+        (
+          "Tags: #lambdaworks.io $www.scala-lang.org",
+          Set(Url.parse("http://lambdaworks.io"), Url.parse("http://www.scala-lang.org"))
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testSpecialCharPrefixes) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
   }
 
 }
