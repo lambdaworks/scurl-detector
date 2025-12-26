@@ -3,7 +3,7 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 const config = {
   title: 'Scala URL Detector',
-  tagline: 'Scala library that detects and extract URLs from text',
+  tagline: 'Scala library that detects and extracts URLs from text',
   url: 'https://lambdaworks.github.io',
   baseUrl: '/scurl-detector/',
   onBrokenLinks: 'throw',
