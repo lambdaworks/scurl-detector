@@ -498,4 +498,43 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
 
   }
 
+  it should "reject URLs with userinfo when no explicit scheme is present" in {
+
+    val testUserinfoWithoutScheme =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "ono:doope@fb.net:9090/dhdh",
+          Set.empty[Url]
+        ),
+        (
+          "user:pass@host.com",
+          Set.empty[Url]
+        ),
+        (
+          "http://user:pass@host.com",
+          Set(Url.parse("http://user:pass@host.com"))
+        ),
+        (
+          "https://user:pass@host.com",
+          Set(Url.parse("https://user:pass@host.com"))
+        ),
+        (
+          "ftp://user:pass@ftp.example.com",
+          Set(Url.parse("ftp://user:pass@ftp.example.com"))
+        ),
+        (
+          "Check out http://admin:secret@example.com for admin panel",
+          Set(Url.parse("http://admin:secret@example.com"))
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    forAll(testUserinfoWithoutScheme) { (text: String, expectedUrls: Set[Url]) =>
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+
+  }
+
 }

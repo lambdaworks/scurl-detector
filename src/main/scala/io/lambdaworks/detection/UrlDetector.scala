@@ -41,12 +41,20 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map(url =>
-        AbsoluteUrl.parse(
+      .map { url =>
+        val originalUrl = url.getOriginalUrl
+        val parsedUrl   = AbsoluteUrl.parse(
           normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
         )
-      )
-      .filter(url => allowedUrl(url) && notEmail(url) && validTopLevelDomain(url))
+        (originalUrl, parsedUrl)
+      }
+      .filter { case (originalUrl, parsedUrl) =>
+        allowedUrl(parsedUrl) && notEmail(parsedUrl) && validTopLevelDomain(parsedUrl) && validUserinfo(
+          originalUrl,
+          parsedUrl
+        )
+      }
+      .map(_._2)
       .toSet
   }
 
@@ -147,6 +155,15 @@ final class UrlDetector private (
   private def validTopLevelDomain(url: AbsoluteUrl): Boolean =
     options == UrlDetectorOptions.AllowSingleLevelDomain || validSuffix(url) || isIp(url)
 
+  private def validUserinfo(originalUrl: String, parsedUrl: AbsoluteUrl): Boolean =
+    (parsedUrl.user, parsedUrl.password) match {
+      case (None, None) => true                           // No userinfo, so it's valid
+      case _            => hasExplicitScheme(originalUrl) // Has userinfo, must have explicit scheme
+    }
+
+  private def hasExplicitScheme(url: String): Boolean =
+    ValidSchemes.exists(scheme => url.startsWith(s"$scheme://"))
+
 }
 
 object UrlDetector {
@@ -171,6 +188,8 @@ object UrlDetector {
 
   private final val EmptyParensRegex: Regex = "\\(\\)[^()]*".r
   private final val SanitizeRegex: Regex    = "[,!-.`/]+$".r
+
+  private final val ValidSchemes: Set[String] = Set("http", "https", "ftp", "ftps")
 
   implicit private[detection] val orderingHost: Ordering[Host] = orderHost.toOrdering
 
