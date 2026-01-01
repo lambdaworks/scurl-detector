@@ -15,7 +15,7 @@ Scala library that detects and extracts URLs from text.
 
 [scala-version-badge]: https://img.shields.io/badge/scala-2.13.16-blue?logo=scala&color=red
 
-[sonatype-releases-badge]: https://img.shields.io/nexus/r/https/s01.oss.sonatype.org/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Releases"
-[sonatype-releases-version]: https://s01.oss.sonatype.org/content/repositories/releases/io/lambdaworks/scurl-detector_2.13/ "Sonatype Releases"
-[sonatype-snapshots-badge]: https://img.shields.io/nexus/s/https/central.sonatype.com/io.lambdaworks/scurl-detector_2.13.svg "Sonatype Snapshots"
+[sonatype-releases-badge]: https://img.shields.io/maven-central/v/io.lambdaworks/scurl-detector_2.13.svg?label=Release "Maven Central"
+[sonatype-releases-version]: https://central.sonatype.com/artifact/io.lambdaworks/scurl-detector_2.13 "Maven Central"
+[sonatype-snapshots-badge]: https://img.shields.io/maven-metadata/v?label=Snapshot&metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fio%2Flambdaworks%2Fscurl-detector_2.13%2Fmaven-metadata.xml "Sonatype Snapshots"
 [sonatype-snapshots-version]: https://central.sonatype.com/repository/maven-snapshots/io/lambdaworks/scurl-detector_2.13/ "Sonatype Snapshots"
