@@ -42,12 +42,15 @@ final class UrlDetector private (
       .detect()
       .asScala
       .toList
-      .map { url =>
+      .flatMap { url =>
         val originalUrl = url.getOriginalUrl
-        val parsedUrl   = AbsoluteUrl.parse(
-          normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
-        )
-        (originalUrl, parsedUrl)
+        AbsoluteUrl
+          .parseOption(
+            normalizeProtocolRelativeUrl(
+              sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString)))
+            )
+          )
+          .map(parsedUrl => (originalUrl, parsedUrl))
       }
       .filter { case (originalUrl, parsedUrl) =>
         allowedUrl(parsedUrl) && notEmail(parsedUrl) && validTopLevelDomain(parsedUrl) && validUserinfo(
