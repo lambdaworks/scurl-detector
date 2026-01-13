@@ -605,4 +605,41 @@ final class UrlDetectorSpec extends AnyFlatSpec with Matchers {
     }
   }
 
+  it should "handle invalid URLs gracefully without throwing exceptions" in {
+
+    val testInvalidUrls =
+      Table(
+        ("text", "expectedUrls"),
+        (
+          "Check out http://[invalid brackets] for more",
+          Set.empty[Url]
+        ),
+        (
+          "Visit http://example..com with double dots",
+          Set.empty[Url]
+        ),
+        (
+          "Mix of http://valid.com and http://[invalid] URLs",
+          Set(Url.parse("http://valid.com"))
+        ),
+        (
+          "Multiple valid.com and [malformed URL] test",
+          Set(Url.parse("http://valid.com"))
+        ),
+        (
+          "Just normal text without URLs",
+          Set.empty[Url]
+        )
+      )
+
+    val detector = UrlDetector.default
+
+    // This test verifies that invalid URLs don't cause exceptions
+    // and are simply filtered out from the results
+    forAll(testInvalidUrls) { (text: String, expectedUrls: Set[Url]) =>
+      noException should be thrownBy detector.extract(text)
+      detector.extract(text).map(_.toString) shouldBe expectedUrls.map(_.toString)
+    }
+  }
+
 }
