@@ -44,9 +44,13 @@ final class UrlDetector private (
       .toList
       .flatMap { url =>
         val originalUrl = url.getOriginalUrl
-        AbsoluteUrl.parseOption(
-          normalizeProtocolRelativeUrl(sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString))))
-        ).map(parsedUrl => (originalUrl, parsedUrl))
+        AbsoluteUrl
+          .parseOption(
+            normalizeProtocolRelativeUrl(
+              sanitize(cleanUrlForBracketMatch(content, normalizeEncodedSpaces(url.toString)))
+            )
+          )
+          .map(parsedUrl => (originalUrl, parsedUrl))
       }
       .filter { case (originalUrl, parsedUrl) =>
         allowedUrl(parsedUrl) && notEmail(parsedUrl) && validTopLevelDomain(parsedUrl) && validUserinfo(
