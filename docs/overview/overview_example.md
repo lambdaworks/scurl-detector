@@ -202,10 +202,10 @@ combinedUrls.foreach(println)
 The extracted URLs are `AbsoluteUrl` instances from scala-uri:
 
 ```scala mdoc
-val detector = UrlDetector.default
-val urls = detector.extract("https://api.example.com:8080/v1/users?page=1#top")
+val urlComponentsDetector = UrlDetector.default
+val componentUrls = urlComponentsDetector.extract("https://api.example.com:8080/v1/users?page=1#top")
 
-urls.foreach { url =>
+componentUrls.foreach { url =>
   println(s"Scheme: ${url.schemeOption}")
   println(s"Host: ${url.host}")
   println(s"Port: ${url.port}")
@@ -220,8 +220,8 @@ urls.foreach { url =>
 Filter extracted URLs by scheme:
 
 ```scala mdoc
-val allUrls = UrlDetector.default.extract("Visit https://secure.example.com and http://legacy.example.com")
-val httpsOnly = allUrls.filter(_.schemeOption.contains("https"))
+val schemeUrls = UrlDetector.default.extract("Visit https://secure.example.com and http://legacy.example.com")
+val httpsOnly = schemeUrls.filter(_.schemeOption.contains("https"))
 
 httpsOnly.foreach(println)
 ```
@@ -235,8 +235,8 @@ val multiSiteText = """
 Check https://github.com/user1, https://github.com/user2,
 https://gitlab.com/project, and https://bitbucket.org/repo
 """
-val allExtracted = UrlDetector.default.extract(multiSiteText)
-val byHost = allExtracted.groupBy(_.host)
+val groupedUrls = UrlDetector.default.extract(multiSiteText)
+val byHost = groupedUrls.groupBy(_.host)
 
 byHost.foreach { case (host, urls) =>
   println(s"$host: ${urls.size} URLs")
