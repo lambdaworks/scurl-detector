@@ -38,4 +38,3 @@ jobs:
 
           additional_permissions: |
             actions: read
-
