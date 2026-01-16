@@ -175,6 +175,8 @@ final class UrlDetector private (
 
 object UrlDetector {
 
+  private val emailValidator: EmailValidator = EmailValidator.getInstance()
+
   /**
    * Creates a [[io.lambdaworks.detection.UrlDetector]] with the specified [[io.lambdaworks.detection.UrlDetectorOptions]]
    *
@@ -182,7 +184,7 @@ object UrlDetector {
    * @return new [[io.lambdaworks.detection.UrlDetector]] with the specified URL detector options
    */
   def apply(options: UrlDetectorOptions): UrlDetector =
-    new UrlDetector(options, None, None, EmailValidator.getInstance())
+    new UrlDetector(options, None, None, emailValidator)
 
   /**
    * A [[io.lambdaworks.detection.UrlDetector]] with the default options
