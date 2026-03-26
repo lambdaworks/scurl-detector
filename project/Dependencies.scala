@@ -5,7 +5,7 @@ object Dependencies {
   private object Versions {
 
     val UrlDetector           = "0.1.23"
-    val ScalaTest             = "3.2.19"
+    val ScalaTest             = "3.2.20"
     val CommonsValidator      = "1.10.1"
     val ScalaCollectionCompat = "2.14.0"
     val ScalaUri              = "4.2.0"
